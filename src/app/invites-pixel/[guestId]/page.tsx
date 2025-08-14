@@ -1,4 +1,6 @@
-import { headers } from 'next/headers';
+'use client';
+
+import { useEffect, useState } from 'react';
 import type { Guest } from '@/lib/google-sheets';
 import Link from 'next/link';
 import Script from 'next/script';
@@ -13,24 +15,60 @@ declare global {
   }
 }
 
-export const dynamic = 'force-dynamic';
+export default function InvitePixelPage({ params, searchParams }: { params: Promise<{ guestId: string }>, searchParams?: Promise<{ [k: string]: string | string[] | undefined }> }) {
+  const [guestId, setGuestId] = useState<string>('');
+  const [acceptedParam, setAcceptedParam] = useState(false);
+  const [guest, setGuest] = useState<Guest | null>(null);
+  const [loading, setLoading] = useState(true);
 
-export default async function InvitePixelPage({ params, searchParams }: { params: Promise<{ guestId: string }>, searchParams?: Promise<{ [k: string]: string | string[] | undefined }> }) {
-  const { guestId } = await params;
-  const sp = (await (searchParams || Promise.resolve({}))) as { [k: string]: string | string[] | undefined };
-  const acceptedParam = sp?.accepted === '1';
-
-  let guest: Guest | null = null;
-  if (guestId) {
-    const h = await headers();
-    const host = h.get('x-forwarded-host') || h.get('host');
-    const proto = h.get('x-forwarded-proto') || 'http';
-    const origin = host ? `${proto}://${host}` : '';
-    const res = await fetch(`${origin}/api/guests?id=${encodeURIComponent(guestId)}`, { headers: { Accept: 'application/json' }, cache: 'no-store' });
-    if (res.ok) {
-      const data = await res.json().catch(() => null);
-      guest = data?.guest || null;
+  useEffect(() => {
+    async function getParams() {
+      const resolvedParams = await params;
+      const resolvedSearchParams = await (searchParams || Promise.resolve({}));
+      setGuestId(resolvedParams.guestId);
+      setAcceptedParam((resolvedSearchParams as { accepted?: string }).accepted === '1');
     }
+    getParams();
+  }, [params, searchParams]);
+
+  useEffect(() => {
+    async function fetchGuest() {
+      if (guestId) {
+        try {
+          const res = await fetch(`/api/guests?id=${encodeURIComponent(guestId)}`, { 
+            headers: { Accept: 'application/json' } 
+          });
+          if (res.ok) {
+            const data = await res.json().catch(() => null);
+            setGuest(data?.guest || null);
+          }
+        } catch (error) {
+          console.error('Error fetching guest:', error);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setLoading(false);
+      }
+    }
+
+    fetchGuest();
+  }, [guestId]);
+
+  if (loading) {
+    return (
+      <div className="pixel-page">
+        <div className="stars"></div>
+        <div className="container" style={{ maxWidth: 800, margin: '0 auto', padding: 20, position: 'relative', zIndex: 10 }}>
+          <div className="pixel-card" style={{ padding: 30, margin: '20px 0', textAlign: 'center' }}>
+            <h1 className="nano-header">Loading...</h1>
+            <div className="progress-bar">
+              <div className="progress-fill" style={{ width: '50%' }}></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
