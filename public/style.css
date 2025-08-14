@@ -1,0 +1,221 @@
+/* Scope presentation to invite pages only to avoid global overrides */
+.invite-page {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f7f9fc;
+    color: #003366; /* Dark Blue */
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.material-symbols-outlined.icon {
+    font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    line-height: 1;
+    font-size: 1.15em;
+    margin-right: 6px;
+}
+
+.card {
+    background-color: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 51, 102, 0.12);
+    max-width: 640px;
+    width: 100%;
+    text-align: center;
+    padding: 40px 28px;
+    border: 1px solid #d6eaff;
+}
+
+.card-header h1 {
+    font-family: 'Dancing Script', 'Poppins', sans-serif;
+    font-size: 2.6em;
+    color: #005a9c;
+    margin: 0 0 6px 0;
+}
+
+.card-header p {
+    font-size: 1.1em;
+    margin-bottom: 20px;
+}
+
+.card-body h2 {
+    font-size: 1.35em;
+    font-weight: 500;
+    margin: 10px 0 6px 0;
+}
+
+.celebrant-name {
+    width: min(100%, 360px);
+    aspect-ratio: 1 / 1;
+    height: auto;
+    display: block;
+    margin: 10px auto 8px auto;
+}
+
+.godparent-letter {
+    background-color: #e9f5ff;
+    border-left: 4px solid #007bff;
+    margin: 30px 0;
+    padding: 20px;
+    text-align: left;
+    border-radius: 8px;
+}
+
+.godparent-letter h3 {
+    margin-top: 0;
+    color: #005a9c;
+}
+
+.party-details {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin: 30px 0;
+    padding: 20px 0;
+    border-top: 1px dashed #d6eaff;
+    border-bottom: 1px dashed #d6eaff;
+}
+
+.detail-item {
+    flex: 1;
+}
+
+.detail-item strong {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 1.05em;
+    color: #005a9c;
+}
+
+.detail-item p {
+    margin: 5px 0 0 0;
+    font-size: 1em;
+}
+
+#countdown {
+    margin: 30px 0;
+}
+
+#countdown h3 {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    color: #005a9c;
+    margin-bottom: 15px;
+}
+
+#timer {
+    font-size: 2em;
+    font-weight: 700;
+    color: #007bff;
+}
+
+.rsvp-form {
+    margin-top: 30px;
+}
+
+.rsvp-form h3 {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #005a9c;
+}
+
+.rsvp-form form {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.rsvp-form button,
+.invite-button {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.rsvp-form button:hover,
+.invite-button:hover {
+    transform: scale(1.05);
+}
+
+/* Icon alignment inside buttons */
+.rsvp-form button .material-symbols-outlined,
+.invite-button .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    line-height: 1;
+    font-size: 1.15em;
+    margin-right: 6px;
+}
+
+/* Variants */
+.invite-button.primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.rsvp-form button[value="Confirmed"],
+.invite-button.confirm {
+    background-color: #28a745;
+    color: white;
+}
+
+.rsvp-form button.decline,
+.invite-button.decline {
+    background-color: #dc3545;
+    color: white;
+}
+
+.rsvp-confirmed {
+    margin-top: 30px;
+    background: #e9f5ff;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+@media (min-width: 640px) {
+    .party-details { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 600px) {
+    .card { padding: 24px; border-radius: 16px; }
+    .rsvp-form form { flex-direction: column; }
+}
+
+.microcopy {
+    font-size: 0.85em;
+    color: #475569;
+}
+
+.qr-code {
+    display: flex;
+    justify-content: center;
+}
+
+.gift-note {
+    margin-top: 16px;
+    font-size: 0.95em;
+    color: #334155;
+}
