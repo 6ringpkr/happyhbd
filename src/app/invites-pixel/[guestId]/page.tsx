@@ -24,117 +24,382 @@ export default async function InvitePixelPage({ params, searchParams }: { params
   }
 
   return (
-    <div className="pixel-page pixel-crt" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
-      {guest ? (
-        <div className="pixel-card" style={{ maxWidth: 700, width: '100%', padding: 24, background: '#0e1530', color: '#e6f0ff' }}>
-          <div className="card-header" style={{ textAlign: 'center' }}>
-            <h1 style={{ fontSize: 28, margin: 0 }}>Dear {guest.name},</h1>
-            <p style={{ marginTop: 10, opacity: .9 }}>Press Start to celebrate!</p>
-          </div>
-
-          <div className="card-body" style={{ marginTop: 16, textAlign: 'center' }}>
-            <h2 style={{ fontSize: 16, margin: 0 }}>Our little hero</h2>
-            <img className="celebrant-name" src="/celebrant-name.png" alt="Celebrant name" style={{ width: 320, maxWidth: '100%', imageRendering: 'pixelated', margin: '8px auto' }} />
-            <h2 style={{ fontSize: 16, margin: 0 }}>is turning one!</h2>
-          </div>
-
-          {guest.isGodparent && !guest.godparentAcceptedAt && !acceptedParam && (
-            <div className="pixel-panel" style={{ background: '#0b1124', padding: 16, marginTop: 16 }}>
-              <h3 style={{ marginTop: 0 }}>Quest: Become Godparent</h3>
-              <p>We would be honored to have you as Ninong/Ninang. If you accept, please confirm your full legal name for the dedication certificate.</p>
-              <form id="accept-form" action="/api/godparent-accept" method="POST" style={{ display: 'grid', justifyItems: 'center', gap: 8 }}>
-                <input type="hidden" name="uniqueId" value={guest.uniqueId} />
-                <label htmlFor="fullName" style={{ width: '100%', maxWidth: 320, textAlign: 'left', fontSize: 12, opacity: .8 }}>Full legal name</label>
-                <input id="fullName" name="fullName" required className="pixel-input" placeholder="Full legal name" style={{ width: '100%', maxWidth: 320, padding: 10, border: '4px solid #1e2a56', background: '#0a0f1f', color: '#e6f0ff' }} />
-                <button type="submit" name="accept" value="yes" className="pixel-btn" style={{ marginTop: 6 }}>
-                  ▶ I accept to be Godparent
-                </button>
-              </form>
+    <div className="pixel-page">
+      <div className="stars"></div>
+      
+      <div className="container" style={{ maxWidth: 800, margin: '0 auto', padding: 20, position: 'relative', zIndex: 10 }}>
+        {guest ? (
+          <>
+            {/* Welcome Screen */}
+            <div className="screen active" id="welcome">
+              <div className="pixel-card" style={{ padding: 30, margin: '20px 0' }}>
+                <h1 className="nano-header" style={{ fontSize: 'clamp(16px, 4vw, 24px)', lineHeight: 1.4, textAlign: 'center', marginBottom: 20 }}>
+                  🎮 LEVEL 1 COMPLETE! 🎮
+                </h1>
+                
+                <div className="progress-bar">
+                  <div className="progress-fill" id="welcomeProgress"></div>
+                </div>
+                
+                <div className="pixel-text" style={{ textAlign: 'center' }}>
+                  <span className="controller">🎮</span>
+                  <div className="coin"></div>
+                  <span className="heart">♥</span>
+                  <div className="coin"></div>
+                  <span className="controller">🎮</span>
+                </div>
+                
+                <div className="pixel-text">
+                  PLAYER NAME: {guest.name.toUpperCase()}<br>
+                  ACHIEVEMENT UNLOCKED: FIRST BIRTHDAY!<br>
+                  EXP GAINED: 365 DAYS OF AWESOME<br><br>
+                  
+                  Join us for an epic retro gaming celebration as our little player reaches Level 1!<br><br>
+                  
+                  📅 DATE: OCTOBER 11TH, 2025<br>
+                  ⏰ TIME: 3:00 PM<br>
+                  📍 LOCATION: TBA<br><br>
+                  
+                  Come dressed as your favorite retro game character!<br>
+                  Prepare for cake, games, and power-ups galore! <span className="heart">♥♥♥</span>
+                </div>
+                
+                <div style={{ textAlign: 'center', marginTop: 30 }}>
+                  <button className="pixel-btn" onClick="nextScreen('godparent')">CONTINUE ▶</button>
+                </div>
+              </div>
             </div>
-          )}
 
-          <div className="party-details" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginTop: 16 }}>
-            <div><strong>Date</strong><p>Oct 11, 2025</p></div>
-            <div><strong>Time</strong><p>3:00 PM</p></div>
-            <div><strong>Location</strong><p>TBA</p></div>
-          </div>
+            {/* Godparent Section */}
+            {guest.isGodparent && !guest.godparentAcceptedAt && !acceptedParam && (
+              <div className="screen" id="godparent">
+                <div className="pixel-card" style={{ padding: 30, margin: '20px 0' }}>
+                  <h1 className="nano-header" style={{ fontSize: 'clamp(16px, 4vw, 24px)', lineHeight: 1.4, textAlign: 'center', marginBottom: 20 }}>
+                    🌟 SPECIAL QUEST INVITATION 🌟
+                  </h1>
+                  <h2 className="nano-title" style={{ fontSize: 'clamp(12px, 3vw, 16px)', lineHeight: 1.4, textAlign: 'center', marginBottom: 20 }}>
+                    GODPARENT SELECTION SCREEN
+                  </h2>
+                  
+                  <div className="pixel-text">
+                    Greetings, chosen warrior! <span className="heart">♥</span><br><br>
+                    
+                    You have been selected for the most important side quest of all time:<br>
+                    BECOMING BABY LAUAN'S GODPARENT!<br><br>
+                    
+                    This legendary role comes with special abilities:<br>
+                    • Extra hugs and cuddles power-up<br>
+                    • Spoiling privileges activated<br>
+                    • Unlimited babysitting tokens<br>
+                    • Wisdom sharing bonus multiplier<br>
+                    • Love level: MAXIMUM! <span className="heart">♥♥♥</span><br><br>
+                    
+                    Do you accept this sacred quest?
+                  </div>
+                  
+                  <div style={{ textAlign: 'center', marginTop: 30 }}>
+                    <button className="pixel-btn" onClick="godparentResponse('accept')">ACCEPT QUEST! 🌟</button>
+                    <button className="pixel-btn decline" onClick="godparentResponse('decline')">MAYBE NEXT TIME</button>
+                  </div>
+                  
+                  <div className="response-display" id="godparentResponse" style={{ background: 'rgba(0, 255, 255, 0.1)', border: '2px solid #00ffff', padding: 20, margin: '20px 0', borderRadius: 10, textAlign: 'center', display: 'none' }}></div>
+                </div>
+              </div>
+            )}
 
-          <div id="countdown" style={{ marginTop: 16, textAlign: 'center' }}>
-            <h3>Countdown</h3>
-            <div id="timer" style={{ fontSize: 20 }}></div>
-          </div>
-
-          {(!guest.isGodparent || guest.godparentAcceptedAt || acceptedParam) && (guest.status === 'Pending' ? (
-            <div className="pixel-panel" style={{ background: '#0b1124', padding: 16, marginTop: 16, textAlign: 'center' }}>
-              <h3>Will you be joining us?</h3>
-              <form id="rsvp-form" action="/api/rsvp" method="POST" style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
-                <input type="hidden" name="uniqueId" value={guest.uniqueId} />
-                <button type="submit" name="status" value="Confirmed" className="pixel-btn">▶ I’m attending</button>
-                <button type="submit" name="status" value="Declined" className="pixel-btn" style={{ background: '#6e2237' }}>✖ Can’t make it</button>
-              </form>
+            {/* RSVP Section */}
+            <div className="screen" id="rsvp">
+              <div className="pixel-card" style={{ padding: 30, margin: '20px 0' }}>
+                <h1 className="nano-header" style={{ fontSize: 'clamp(16px, 4vw, 24px)', lineHeight: 1.4, textAlign: 'center', marginBottom: 20 }}>
+                  🎯 PARTY RSVP CHECKPOINT 🎯
+                </h1>
+                <h2 className="nano-title" style={{ fontSize: 'clamp(12px, 3vw, 16px)', lineHeight: 1.4, textAlign: 'center', marginBottom: 20 }}>
+                  WILL YOU JOIN OUR ARCADE ADVENTURE?
+                </h2>
+                
+                <div className="pixel-text">
+                  <span className="controller">🎮</span> MISSION BRIEFING <span className="controller">🎮</span><br><br>
+                  
+                  The birthday quest is loading...<br>
+                  We need to know our party size for optimal gameplay!<br><br>
+                  
+                  PARTY DETAILS REMINDER:<br>
+                  📅 OCTOBER 11TH, 2025<br>
+                  ⏰ 3:00 PM<br>
+                  📍 TBA<br><br>
+                  
+                  Features include:<br>
+                  • Retro gaming stations<br>
+                  • Epic birthday cake boss battle<br>
+                  • Goody bag loot drops<br>
+                  • Photo booth with pixel props<br>
+                  • Dance Dance Birthday moves!<br><br>
+                  
+                  Will you be joining our pixel party?
+                </div>
+                
+                <div style={{ textAlign: 'center', marginTop: 30 }}>
+                  <button className="pixel-btn" onClick="rsvpResponse('attending')">PLAYER READY! 🎮</button>
+                  <button className="pixel-btn decline" onClick="rsvpResponse('notattending')">CAN'T MAKE IT 😔</button>
+                </div>
+                
+                <div className="response-display" id="rsvpResponse" style={{ background: 'rgba(0, 255, 255, 0.1)', border: '2px solid #00ffff', padding: 20, margin: '20px 0', borderRadius: 10, textAlign: 'center', display: 'none' }}></div>
+              </div>
             </div>
-          ) : (
-            <div className="pixel-panel" style={{ background: '#0b1124', padding: 16, marginTop: 16 }}>
-              <h3>Thank you for your response!</h3>
-              <p>Status: <strong>{guest.status}</strong></p>
-            </div>
-          ))}
 
-          <div className="gift-note" style={{ marginTop: 16, textAlign: 'center' }}>
-            Your presence is the most precious gift we could ask for. If you wish to bless Lauan further, we would deeply appreciate monetary gifts for his future needs or gift checks from department stores. 💙
+            {/* Gift Preference Section */}
+            <div className="screen" id="gifts">
+              <div className="pixel-card" style={{ padding: 30, margin: '20px 0' }}>
+                <h1 className="nano-header" style={{ fontSize: 'clamp(16px, 4vw, 24px)', lineHeight: 1.4, textAlign: 'center', marginBottom: 20 }}>
+                  🎁 LOOT & TREASURE GUIDE 🎁
+                </h1>
+                <h2 className="nano-title" style={{ fontSize: 'clamp(12px, 3vw, 16px)', lineHeight: 1.4, textAlign: 'center', marginBottom: 20 }}>
+                  OPTIONAL POWER-UP SUGGESTIONS
+                </h2>
+                
+                <div className="pixel-text">
+                  Your presence is the greatest gift! <span className="heart">♥</span><br>
+                  But if you'd like to bring a power-up, here are some ideas:<br><br>
+                </div>
+                
+                <div className="pixel-panel" style={{ padding: 15, margin: '10px 0' }}>
+                  <strong>🧸 CLASSIC TOYS CATEGORY</strong><br>
+                  Soft plushies, stacking blocks, musical toys, or sensory play items
+                </div>
+                
+                <div className="pixel-panel" style={{ padding: 15, margin: '10px 0' }}>
+                  <strong>📚 KNOWLEDGE SCROLLS</strong><br>
+                  Board books, picture books, or interactive learning toys
+                </div>
+                
+                <div className="pixel-panel" style={{ padding: 15, margin: '10px 0' }}>
+                  <strong>👕 COSTUME UPGRADES</strong><br>
+                  Size 12-18 months clothing, fun outfits, or cozy pajamas
+                </div>
+                
+                <div className="pixel-panel" style={{ padding: 15, margin: '10px 0' }}>
+                  <strong>🏠 BASE BUILDING MATERIALS</strong><br>
+                  Items for the nursery, storage solutions, or practical baby gear
+                </div>
+                
+                <div className="pixel-panel" style={{ padding: 15, margin: '10px 0' }}>
+                  <strong>💰 COINS FOR FUTURE QUESTS</strong><br>
+                  College fund contributions or savings account deposits
+                </div>
+                
+                <div className="pixel-text" style={{ textAlign: 'center', marginTop: 20 }}>
+                  Remember: The best loot is your love and friendship! <span className="heart">♥♥♥</span>
+                </div>
+                
+                <div style={{ textAlign: 'center', marginTop: 30 }}>
+                  <button className="pixel-btn" onClick="nextScreen('thankyou')">CONTINUE ▶</button>
+                </div>
+              </div>
+            </div>
+
+            {/* Thank You Section */}
+            <div className="screen" id="thankyou">
+              <div className="pixel-card" style={{ padding: 30, margin: '20px 0' }}>
+                <h1 className="nano-header" style={{ fontSize: 'clamp(16px, 4vw, 24px)', lineHeight: 1.4, textAlign: 'center', marginBottom: 20 }}>
+                  🏆 GAME COMPLETE! 🏆
+                </h1>
+                <h2 className="nano-title" style={{ fontSize: 'clamp(12px, 3vw, 16px)', lineHeight: 1.4, textAlign: 'center', marginBottom: 20 }}>
+                  THANK YOU FOR PLAYING!
+                </h2>
+                
+                <div className="pixel-text" style={{ textAlign: 'center' }}>
+                  <div className="coin"></div>
+                  <span className="heart">♥</span>
+                  <div className="coin"></div>
+                  <span className="heart">♥</span>
+                  <div className="coin"></div><br><br>
+                  
+                  HIGH SCORE: INFINITE LOVE!<br><br>
+                  
+                  Thank you for being part of Baby Lauan's<br>
+                  first birthday adventure! <span className="controller">🎮</span><br><br>
+                  
+                  We can't wait to celebrate with you<br>
+                  and create new memories together!<br><br>
+                  
+                  ACHIEVEMENT UNLOCKED:<br>
+                  "AWESOME FRIEND/FAMILY MEMBER"<br><br>
+                  
+                  For questions or special requests:<br>
+                  📧 EMAIL: PARENTS@BABYLEVEL1.COM<br>
+                  📱 CALL/TEXT: (555) GAME-FUN<br><br>
+                  
+                  SEE YOU AT THE PARTY!<br>
+                  <span className="heart">♥♥♥ LOVE, THE LAUAN FAMILY ♥♥♥</span>
+                </div>
+                
+                <div className="progress-bar">
+                  <div className="progress-fill" id="thankyouProgress" style={{ width: '100%' }}></div>
+                </div>
+                
+                <div style={{ textAlign: 'center', marginTop: 30 }}>
+                  <button className="pixel-btn" onClick="resetInvitation()">PLAY AGAIN 🔄</button>
+                </div>
+              </div>
+            </div>
+          </>
+        ) : (
+          <div className="pixel-card" style={{ padding: 30, margin: '20px 0', textAlign: 'center' }}>
+            <h1 className="nano-header">Invitation Not Found</h1>
+            <p className="pixel-text">Sorry, we couldn't find your invitation. Please check the link and try again.</p>
+            <p><Link href="/" style={{ color: '#00ff00' }}>Go back</Link></p>
           </div>
-        </div>
-      ) : (
-        <div className="pixel-card" style={{ maxWidth: 700, width: '100%', padding: 24, background: '#0e1530', color: '#e6f0ff', textAlign: 'center' }}>
-          <h1>Invitation Not Found</h1>
-          <p>Sorry, we couldn’t find your invitation. Please check the link and try again.</p>
-          <p><Link href="/">Go back</Link></p>
-        </div>
-      )}
+        )}
+      </div>
+
       <Script id="invite-scripts-pixel" strategy="afterInteractive">
         {`
-          (function(){
-            const partyDate = '2025-10-11T15:00:00';
-            const countDownDate = new Date(partyDate).getTime();
-            const timerElement = document.getElementById('timer');
-            if (timerElement) {
-              const x = setInterval(function() {
-                const now = new Date().getTime();
-                const distance = countDownDate - now;
-                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-                timerElement.innerHTML = days + 'd ' + hours + 'h ' + minutes + 'm ' + seconds + 's';
-                if (distance < 0) { clearInterval(x); timerElement.innerHTML = 'It\'s party time!'; }
-              }, 1000);
+          // Create animated stars
+          function createStars() {
+            const starsContainer = document.querySelector('.stars');
+            if (!starsContainer) return;
+            
+            for (let i = 0; i < 100; i++) {
+              const star = document.createElement('div');
+              star.className = 'star';
+              star.style.left = Math.random() * 100 + '%';
+              star.style.top = Math.random() * 100 + '%';
+              star.style.width = Math.random() * 3 + 1 + 'px';
+              star.style.height = star.style.width;
+              star.style.animationDelay = Math.random() * 2 + 's';
+              star.style.position = 'absolute';
+              star.style.background = '#fff';
+              star.style.borderRadius = '50%';
+              star.style.animation = 'twinkle 2s infinite alternate';
+              star.style.pointerEvents = 'none';
+              starsContainer.appendChild(star);
             }
-            const af = document.getElementById('accept-form');
-            if (af) {
-              af.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const data = new FormData(af);
-                const submitter = e.submitter;
-                if (submitter && submitter.name) { data.append(submitter.name, submitter.value || 'yes'); } else { data.append('accept', 'yes'); }
-                const res = await fetch(af.getAttribute('action') || '/api/godparent-accept', { method: 'POST', body: data, headers: { Accept: 'application/json' } });
-                if (res.ok) {
-                  const url = new URL(location.href); url.searchParams.set('accepted', '1'); location.href = url.toString();
-                } else { const t = await res.text().catch(()=>'' ); alert(t || 'Failed to accept godparent role'); }
+          }
+
+          // Navigation functions
+          function nextScreen(screenId) {
+            const currentScreen = document.querySelector('.screen.active');
+            const nextScreen = document.getElementById(screenId);
+            
+            if (currentScreen && nextScreen) {
+              currentScreen.classList.remove('active');
+              setTimeout(() => {
+                nextScreen.classList.add('active');
+              }, 300);
+            }
+          }
+          
+          function godparentResponse(response) {
+            const responseDiv = document.getElementById('godparentResponse');
+            
+            if (response === 'accept') {
+              responseDiv.innerHTML = \`
+                <div style="color: #00ff00;">
+                  <div class="heart" style="font-size: 24px;">♥♥♥</div><br>
+                  QUEST ACCEPTED!<br>
+                  Welcome to the family, Godparent!<br>
+                  Your legendary status is now activated!<br>
+                  <div class="coin"></div><div class="coin"></div><div class="coin"></div>
+                </div>
+              \`;
+            } else {
+              responseDiv.innerHTML = \`
+                <div style="color: #ffff00;">
+                  No worries! The quest will remain available.<br>
+                  Thank you for considering! <span class="heart">♥</span>
+                </div>
+              \`;
+            }
+            
+            responseDiv.classList.add('show');
+            responseDiv.style.display = 'block';
+            
+            setTimeout(() => {
+              nextScreen('rsvp');
+            }, 3000);
+          }
+          
+          function rsvpResponse(response) {
+            const responseDiv = document.getElementById('rsvpResponse');
+            
+            if (response === 'attending') {
+              responseDiv.innerHTML = \`
+                <div style="color: #00ff00;">
+                  <span class="controller" style="font-size: 24px;">🎮</span><br>
+                  AWESOME! PLAYER CONFIRMED!<br>
+                  We can't wait to party with you!<br>
+                  Get ready for an epic celebration!<br>
+                  <div class="coin"></div><div class="coin"></div><div class="coin"></div>
+                </div>
+              \`;
+            } else {
+              responseDiv.innerHTML = \`
+                <div style="color: #ffaa00;">
+                  We'll miss you at the party! <span class="heart">♥</span><br>
+                  Hope we can celebrate together next time!<br>
+                  Sending virtual hugs your way!
+                </div>
+              \`;
+            }
+            
+            responseDiv.classList.add('show');
+            responseDiv.style.display = 'block';
+            
+            setTimeout(() => {
+              nextScreen('gifts');
+            }, 3000);
+          }
+          
+          function resetInvitation() {
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(screen => {
+              screen.classList.remove('active');
+            });
+            
+            // Show welcome screen
+            setTimeout(() => {
+              document.getElementById('welcome').classList.add('active');
+              
+              // Reset progress bars
+              document.getElementById('welcomeProgress').style.width = '0%';
+              document.getElementById('thankyouProgress').style.width = '0%';
+              
+              // Hide response displays
+              document.querySelectorAll('.response-display').forEach(div => {
+                div.classList.remove('show');
+                div.style.display = 'none';
               });
-            }
-            const rf = document.getElementById('rsvp-form');
-            if (rf) {
-              rf.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const data = new FormData(rf);
-                const submitter = e.submitter;
-                if (submitter && submitter.name) { data.append(submitter.name, submitter.value); }
-                const res = await fetch(rf.getAttribute('action') || '/api/rsvp', { method: 'POST', body: data, headers: { Accept: 'application/json' } });
-                if (res.ok) { const json = await res.json().catch(() => null); if (json?.ok) { const params = new URLSearchParams(location.search); const uid = params.get('uniqueId') || '${guest?.uniqueId || ''}'; const redirectUrl = '/thank-you?uniqueId=' + encodeURIComponent(uid) + '&status=' + encodeURIComponent(json.status); location.href = redirectUrl; } else { location.href = '/thank-you'; } }
-                else { const t = await res.text().catch(()=>'' ); alert(t || 'Failed to submit RSVP'); }
+              
+              // Restart welcome progress
+              setTimeout(() => {
+                document.getElementById('welcomeProgress').style.width = '100%';
+              }, 500);
+              
+            }, 500);
+          }
+
+          // Initialize
+          document.addEventListener('DOMContentLoaded', function() {
+            createStars();
+            
+            // Start welcome progress bar
+            setTimeout(() => {
+              const welcomeProgress = document.getElementById('welcomeProgress');
+              if (welcomeProgress) {
+                welcomeProgress.style.width = '100%';
+              }
+            }, 1000);
+            
+            // Add some sound effects simulation (visual feedback)
+            document.querySelectorAll('.pixel-btn').forEach(button => {
+              button.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                  this.style.transform = '';
+                }, 150);
               });
-            }
-          })();
+            });
+          });
         `}
       </Script>
     </div>

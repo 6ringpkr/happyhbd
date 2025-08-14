@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Level 1 Complete! Baby's First Birthday</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P:wght@400&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background: linear-gradient(45deg, #0f0f23, #1a1a40);
+            color: #00ff00;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .star {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle 2s infinite alternate;
+        }
+        
+        @keyframes twinkle {
+            0% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .screen {
+            background: #000;
+            border: 4px solid #00ff00;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
+            animation: screenGlow 3s ease-in-out infinite alternate;
+            display: none;
+        }
+        
+        .screen.active {
+            display: block;
+            animation: slideIn 0.8s ease-out;
+        }
+        
+        @keyframes screenGlow {
+            0% { box-shadow: 0 0 30px rgba(0, 255, 0, 0.3); }
+            100% { box-shadow: 0 0 50px rgba(0, 255, 0, 0.6); }
+        }
+        
+        @keyframes slideIn {
+            0% { 
+                opacity: 0;
+                transform: translateY(50px) scale(0.9);
+            }
+            100% { 
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        h1 {
+            color: #ff6b00;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 0px #000;
+            animation: pulse 2s infinite;
+            font-size: clamp(16px, 4vw, 24px);
+            line-height: 1.4;
+        }
+        
+        h2 {
+            color: #00ffff;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: clamp(12px, 3vw, 16px);
+            line-height: 1.4;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .pixel-text {
+            line-height: 1.8;
+            margin: 15px 0;
+            font-size: clamp(8px, 2vw, 12px);
+            text-shadow: 1px 1px 0px #000;
+        }
+        
+        .button {
+            background: linear-gradient(45deg, #ff6b00, #ff8533);
+            border: 3px solid #fff;
+            color: #000;
+            padding: 15px 25px;
+            margin: 10px;
+            cursor: pointer;
+            font-family: 'Press Start 2P', cursive;
+            font-size: clamp(8px, 2vw, 10px);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-align: center;
+            box-shadow: 0 4px 0 #cc5500;
+            position: relative;
+            top: 0;
+        }
+        
+        .button:hover {
+            background: linear-gradient(45deg, #ff8533, #ffaa66);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #cc5500;
+        }
+        
+        .button:active {
+            top: 4px;
+            box-shadow: 0 0 0 #cc5500;
+        }
+        
+        .button.decline {
+            background: linear-gradient(45deg, #666, #999);
+            box-shadow: 0 4px 0 #333;
+        }
+        
+        .button.decline:hover {
+            background: linear-gradient(45deg, #888, #bbb);
+            box-shadow: 0 6px 0 #333;
+        }
+        
+        .coin {
+            width: 30px;
+            height: 30px;
+            background: #ffd700;
+            border-radius: 50%;
+            display: inline-block;
+            margin: 0 10px;
+            animation: spin 2s linear infinite;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+        }
+        
+        @keyframes spin {
+            0% { transform: rotateY(0deg); }
+            100% { transform: rotateY(360deg); }
+        }
+        
+        .heart {
+            color: #ff0080;
+            animation: heartbeat 1.5s ease-in-out infinite;
+            display: inline-block;
+        }
+        
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        
+        .gift-item {
+            background: rgba(0, 255, 0, 0.1);
+            border: 2px solid #00ff00;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .gift-item:hover {
+            background: rgba(0, 255, 0, 0.2);
+            transform: translateX(10px);
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #333;
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff00, #00ff80);
+            width: 0%;
+            transition: width 1s ease;
+            animation: progressGlow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes progressGlow {
+            0% { box-shadow: 0 0 5px rgba(0, 255, 0, 0.5); }
+            100% { box-shadow: 0 0 20px rgba(0, 255, 0, 0.9); }
+        }
+        
+        .controller {
+            font-size: 30px;
+            animation: bounce 2s infinite;
+            display: inline-block;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        
+        .response-display {
+            background: rgba(0, 255, 255, 0.1);
+            border: 2px solid #00ffff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+        }
+        
+        .response-display.show {
+            display: block;
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .screen {
+                padding: 20px;
+                margin: 10px 0;
+            }
+            
+            .button {
+                padding: 12px 20px;
+                margin: 8px 5px;
+                display: block;
+                width: calc(100% - 20px);
+            }
+            
+            .coin {
+                width: 25px;
+                height: 25px;
+                margin: 0 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars"></div>
+    
+    <div class="container">
+        <!-- Welcome Screen -->
+        <div class="screen active" id="welcome">
+            <h1>🎮 LEVEL 1 COMPLETE! 🎮</h1>
+            <div class="progress-bar">
+                <div class="progress-fill" id="welcomeProgress"></div>
+            </div>
+            
+            <div class="pixel-text" style="text-align: center;">
+                <span class="controller">🎮</span>
+                <div class="coin"></div>
+                <span class="heart">♥</span>
+                <div class="coin"></div>
+                <span class="controller">🎮</span>
+            </div>
+            
+            <div class="pixel-text">
+                PLAYER NAME: BABY ALEX<br>
+                ACHIEVEMENT UNLOCKED: FIRST BIRTHDAY!<br>
+                EXP GAINED: 365 DAYS OF AWESOME<br><br>
+                
+                Join us for an epic retro gaming celebration as our little player reaches Level 1!<br><br>
+                
+                📅 DATE: SATURDAY, MARCH 15TH, 2025<br>
+                ⏰ TIME: 2:00 PM - 6:00 PM<br>
+                📍 LOCATION: THE ARCADE HOUSE<br>
+                123 PIXEL LANE, GAME CITY<br><br>
+                
+                Come dressed as your favorite retro game character!<br>
+                Prepare for cake, games, and power-ups galore! <span class="heart">♥♥♥</span>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="button" onclick="nextScreen('godparent')">CONTINUE ▶</button>
+            </div>
+        </div>
+        
+        <!-- Godparent Section -->
+        <div class="screen" id="godparent">
+            <h1>🌟 SPECIAL QUEST INVITATION 🌟</h1>
+            <h2>GODPARENT SELECTION SCREEN</h2>
+            
+            <div class="pixel-text">
+                Greetings, chosen warrior! <span class="heart">♥</span><br><br>
+                
+                You have been selected for the most important side quest of all time:<br>
+                BECOMING BABY ALEX'S GODPARENT!<br><br>
+                
+                This legendary role comes with special abilities:<br>
+                • Extra hugs and cuddles power-up<br>
+                • Spoiling privileges activated<br>
+                • Unlimited babysitting tokens<br>
+                • Wisdom sharing bonus multiplier<br>
+                • Love level: MAXIMUM! <span class="heart">♥♥♥</span><br><br>
+                
+                Do you accept this sacred quest?
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="button" onclick="godparentResponse('accept')">ACCEPT QUEST! 🌟</button>
+                <button class="button decline" onclick="godparentResponse('decline')">MAYBE NEXT TIME</button>
+            </div>
+            
+            <div class="response-display" id="godparentResponse"></div>
+        </div>
+        
+        <!-- RSVP Section -->
+        <div class="screen" id="rsvp">
+            <h1>🎯 PARTY RSVP CHECKPOINT 🎯</h1>
+            <h2>WILL YOU JOIN OUR ARCADE ADVENTURE?</h2>
+            
+            <div class="pixel-text">
+                <span class="controller">🎮</span> MISSION BRIEFING <span class="controller">🎮</span><br><br>
+                
+                The birthday quest is loading...<br>
+                We need to know our party size for optimal gameplay!<br><br>
+                
+                PARTY DETAILS REMINDER:<br>
+                📅 MARCH 15TH, 2025<br>
+                ⏰ 2:00 PM - 6:00 PM<br>
+                📍 THE ARCADE HOUSE<br><br>
+                
+                Features include:<br>
+                • Retro gaming stations<br>
+                • Epic birthday cake boss battle<br>
+                • Goody bag loot drops<br>
+                • Photo booth with pixel props<br>
+                • Dance Dance Birthday moves!<br><br>
+                
+                Will you be joining our pixel party?
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="button" onclick="rsvpResponse('attending')">PLAYER READY! 🎮</button>
+                <button class="button decline" onclick="rsvpResponse('notattending')">CAN'T MAKE IT 😔</button>
+            </div>
+            
+            <div class="response-display" id="rsvpResponse"></div>
+        </div>
+        
+        <!-- Gift Preference Section -->
+        <div class="screen" id="gifts">
+            <h1>🎁 LOOT & TREASURE GUIDE 🎁</h1>
+            <h2>OPTIONAL POWER-UP SUGGESTIONS</h2>
+            
+            <div class="pixel-text">
+                Your presence is the greatest gift! <span class="heart">♥</span><br>
+                But if you'd like to bring a power-up, here are some ideas:<br><br>
+            </div>
+            
+            <div class="gift-item">
+                <strong>🧸 CLASSIC TOYS CATEGORY</strong><br>
+                Soft plushies, stacking blocks, musical toys, or sensory play items
+            </div>
+            
+            <div class="gift-item">
+                <strong>📚 KNOWLEDGE SCROLLS</strong><br>
+                Board books, picture books, or interactive learning toys
+            </div>
+            
+            <div class="gift-item">
+                <strong>👕 COSTUME UPGRADES</strong><br>
+                Size 12-18 months clothing, fun outfits, or cozy pajamas
+            </div>
+            
+            <div class="gift-item">
+                <strong>🏠 BASE BUILDING MATERIALS</strong><br>
+                Items for the nursery, storage solutions, or practical baby gear
+            </div>
+            
+            <div class="gift-item">
+                <strong>💰 COINS FOR FUTURE QUESTS</strong><br>
+                College fund contributions or savings account deposits
+            </div>
+            
+            <div class="pixel-text" style="text-align: center; margin-top: 20px;">
+                Remember: The best loot is your love and friendship! <span class="heart">♥♥♥</span>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="button" onclick="nextScreen('thankyou')">CONTINUE ▶</button>
+            </div>
+        </div>
+        
+        <!-- Thank You Section -->
+        <div class="screen" id="thankyou">
+            <h1>🏆 GAME COMPLETE! 🏆</h1>
+            <h2>THANK YOU FOR PLAYING!</h2>
+            
+            <div class="pixel-text" style="text-align: center;">
+                <div class="coin"></div>
+                <span class="heart">♥</span>
+                <div class="coin"></div>
+                <span class="heart">♥</span>
+                <div class="coin"></div><br><br>
+                
+                HIGH SCORE: INFINITE LOVE!<br><br>
+                
+                Thank you for being part of Baby Alex's<br>
+                first birthday adventure! <span class="controller">🎮</span><br><br>
+                
+                We can't wait to celebrate with you<br>
+                and create new memories together!<br><br>
+                
+                ACHIEVEMENT UNLOCKED:<br>
+                "AWESOME FRIEND/FAMILY MEMBER"<br><br>
+                
+                For questions or special requests:<br>
+                📧 EMAIL: PARENTS@BABYLEVEL1.COM<br>
+                📱 CALL/TEXT: (555) GAME-FUN<br><br>
+                
+                SEE YOU AT THE PARTY!<br>
+                <span class="heart">♥♥♥ LOVE, THE ALEX FAMILY ♥♥♥</span>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="thankyouProgress" style="width: 100%;"></div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="button" onclick="resetInvitation()">PLAY AGAIN 🔄</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Create animated stars
+        function createStars() {
+            const starsContainer = document.querySelector('.stars');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = Math.random() * 3 + 1 + 'px';
+                star.style.height = star.style.width;
+                star.style.animationDelay = Math.random() * 2 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+        
+        // Navigation functions
+        function nextScreen(screenId) {
+            const currentScreen = document.querySelector('.screen.active');
+            const nextScreen = document.getElementById(screenId);
+            
+            currentScreen.classList.remove('active');
+            setTimeout(() => {
+                nextScreen.classList.add('active');
+            }, 300);
+        }
+        
+        function godparentResponse(response) {
+            const responseDiv = document.getElementById('godparentResponse');
+            
+            if (response === 'accept') {
+                responseDiv.innerHTML = `
+                    <div style="color: #00ff00;">
+                        <div class="heart" style="font-size: 24px;">♥♥♥</div><br>
+                        QUEST ACCEPTED!<br>
+                        Welcome to the family, Godparent!<br>
+                        Your legendary status is now activated!<br>
+                        <div class="coin"></div><div class="coin"></div><div class="coin"></div>
+                    </div>
+                `;
+            } else {
+                responseDiv.innerHTML = `
+                    <div style="color: #ffff00;">
+                        No worries! The quest will remain available.<br>
+                        Thank you for considering! <span class="heart">♥</span>
+                    </div>
+                `;
+            }
+            
+            responseDiv.classList.add('show');
+            
+            setTimeout(() => {
+                nextScreen('rsvp');
+            }, 3000);
+        }
+        
+        function rsvpResponse(response) {
+            const responseDiv = document.getElementById('rsvpResponse');
+            
+            if (response === 'attending') {
+                responseDiv.innerHTML = `
+                    <div style="color: #00ff00;">
+                        <span class="controller" style="font-size: 24px;">🎮</span><br>
+                        AWESOME! PLAYER CONFIRMED!<br>
+                        We can't wait to party with you!<br>
+                        Get ready for an epic celebration!<br>
+                        <div class="coin"></div><div class="coin"></div><div class="coin"></div>
+                    </div>
+                `;
+            } else {
+                responseDiv.innerHTML = `
+                    <div style="color: #ffaa00;">
+                        We'll miss you at the party! <span class="heart">♥</span><br>
+                        Hope we can celebrate together next time!<br>
+                        Sending virtual hugs your way!
+                    </div>
+                `;
+            }
+            
+            responseDiv.classList.add('show');
+            
+            setTimeout(() => {
+                nextScreen('gifts');
+            }, 3000);
+        }
+        
+        function resetInvitation() {
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            
+            // Show welcome screen
+            setTimeout(() => {
+                document.getElementById('welcome').classList.add('active');
+                
+                // Reset progress bars
+                document.getElementById('welcomeProgress').style.width = '0%';
+                document.getElementById('thankyouProgress').style.width = '0%';
+                
+                // Hide response displays
+                document.querySelectorAll('.response-display').forEach(div => {
+                    div.classList.remove('show');
+                });
+                
+                // Restart welcome progress
+                setTimeout(() => {
+                    document.getElementById('welcomeProgress').style.width = '100%';
+                }, 500);
+                
+            }, 500);
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            createStars();
+            
+            // Start welcome progress bar
+            setTimeout(() => {
+                document.getElementById('welcomeProgress').style.width = '100%';
+            }, 1000);
+        });
+        
+        // Add some sound effects simulation (visual feedback)
+        document.querySelectorAll('.button').forEach(button => {
+            button.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            });
+        });
+    </script>
+</body>
+</html>
