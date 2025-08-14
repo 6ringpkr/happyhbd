@@ -65,7 +65,7 @@ export default async function InvitePixelPage({ params, searchParams }: { params
                 </div>
                 
                 <div style={{ textAlign: 'center', marginTop: 30 }}>
-                  <button className="pixel-btn" onClick="nextScreen('godparent')">CONTINUE ▶</button>
+                  <button className="pixel-btn" onClick={() => window.nextScreen && window.nextScreen('godparent')}>CONTINUE ▶</button>
                 </div>
               </div>
             </div>
@@ -98,8 +98,8 @@ export default async function InvitePixelPage({ params, searchParams }: { params
                   </div>
                   
                   <div style={{ textAlign: 'center', marginTop: 30 }}>
-                    <button className="pixel-btn" onClick="godparentResponse('accept')">ACCEPT QUEST! 🌟</button>
-                    <button className="pixel-btn decline" onClick="godparentResponse('decline')">MAYBE NEXT TIME</button>
+                    <button className="pixel-btn" onClick={() => window.godparentResponse && window.godparentResponse('accept')}>ACCEPT QUEST! 🌟</button>
+                    <button className="pixel-btn decline" onClick={() => window.godparentResponse && window.godparentResponse('decline')}>MAYBE NEXT TIME</button>
                   </div>
                   
                   <div className="response-display" id="godparentResponse" style={{ background: 'rgba(0, 255, 255, 0.1)', border: '2px solid #00ffff', padding: 20, margin: '20px 0', borderRadius: 10, textAlign: 'center', display: 'none' }}></div>
@@ -139,8 +139,8 @@ export default async function InvitePixelPage({ params, searchParams }: { params
                 </div>
                 
                 <div style={{ textAlign: 'center', marginTop: 30 }}>
-                  <button className="pixel-btn" onClick="rsvpResponse('attending')">PLAYER READY! 🎮</button>
-                  <button className="pixel-btn decline" onClick="rsvpResponse('notattending')">CAN'T MAKE IT 😔</button>
+                  <button className="pixel-btn" onClick={() => window.rsvpResponse && window.rsvpResponse('attending')}>PLAYER READY! 🎮</button>
+                  <button className="pixel-btn decline" onClick={() => window.rsvpResponse && window.rsvpResponse('notattending')}>CAN'T MAKE IT 😔</button>
                 </div>
                 
                 <div className="response-display" id="rsvpResponse" style={{ background: 'rgba(0, 255, 255, 0.1)', border: '2px solid #00ffff', padding: 20, margin: '20px 0', borderRadius: 10, textAlign: 'center', display: 'none' }}></div>
@@ -192,7 +192,7 @@ export default async function InvitePixelPage({ params, searchParams }: { params
                 </div>
                 
                 <div style={{ textAlign: 'center', marginTop: 30 }}>
-                  <button className="pixel-btn" onClick="nextScreen('thankyou')">CONTINUE ▶</button>
+                  <button className="pixel-btn" onClick={() => window.nextScreen && window.nextScreen('thankyou')}>CONTINUE ▶</button>
                 </div>
               </div>
             </div>
@@ -238,7 +238,7 @@ export default async function InvitePixelPage({ params, searchParams }: { params
                 </div>
                 
                 <div style={{ textAlign: 'center', marginTop: 30 }}>
-                  <button className="pixel-btn" onClick="resetInvitation()">PLAY AGAIN 🔄</button>
+                  <button className="pixel-btn" onClick={() => window.resetInvitation && window.resetInvitation()}>PLAY AGAIN 🔄</button>
                 </div>
               </div>
             </div>
@@ -378,6 +378,12 @@ export default async function InvitePixelPage({ params, searchParams }: { params
             }, 500);
           }
 
+          // Make functions available globally
+          window.nextScreen = nextScreen;
+          window.godparentResponse = godparentResponse;
+          window.rsvpResponse = rsvpResponse;
+          window.resetInvitation = resetInvitation;
+          
           // Initialize
           document.addEventListener('DOMContentLoaded', function() {
             createStars();
