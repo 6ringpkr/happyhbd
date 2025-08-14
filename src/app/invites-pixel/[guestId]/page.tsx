@@ -3,6 +3,16 @@ import type { Guest } from '@/lib/google-sheets';
 import Link from 'next/link';
 import Script from 'next/script';
 
+// Extend Window interface for our custom functions
+declare global {
+  interface Window {
+    nextScreen?: (screenId: string) => void;
+    godparentResponse?: (response: string) => void;
+    rsvpResponse?: (response: string) => void;
+    resetInvitation?: () => void;
+  }
+}
+
 export const dynamic = 'force-dynamic';
 
 export default async function InvitePixelPage({ params, searchParams }: { params: Promise<{ guestId: string }>, searchParams?: Promise<{ [k: string]: string | string[] | undefined }> }) {
