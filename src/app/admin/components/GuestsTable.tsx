@@ -10,6 +10,7 @@ interface Guest {
   isGodparent: boolean;
   godparentAcceptedAt: string;
   godparentFullName: string;
+  godparentDeclinedAt: string;
 }
 
 interface GuestsTableProps {
@@ -98,6 +99,7 @@ export function GuestsTable({
               </button>
             </th>
             <th scope="col" className="p-2 text-left font-medium text-slate-600">Accepted</th>
+            <th scope="col" className="p-2 text-left font-medium text-slate-600">Declined</th>
             <th scope="col" className="p-2 text-left font-medium text-slate-600">Invite</th>
             <th scope="col" className="p-2 text-left hidden md:table-cell">QR</th>
             <th scope="col" className="p-2 text-left hidden md:table-cell">Actions</th>
@@ -140,6 +142,7 @@ export function GuestsTable({
                 </td>
                 <td className="p-2">{g.rsvpAt}</td>
                 <td className="p-2">{g.godparentAcceptedAt}</td>
+                <td className="p-2">{g.godparentDeclinedAt}</td>
                 <td className="p-2">
                   <a className="underline" href={`/invites/${g.uniqueId}`} target="_blank" rel="noreferrer">
                     /invites/{g.uniqueId}
@@ -177,7 +180,7 @@ export function GuestsTable({
               {/* Mobile expanded content */}
               {expanded[g.uniqueId] ? (
                 <tr className="md:hidden">
-                  <td colSpan={8} className="p-2">
+              <td colSpan={9} className="p-2">
                     <div className="flex items-center gap-3">
                       <img 
                         alt={`QR for ${g.uniqueId}`} 

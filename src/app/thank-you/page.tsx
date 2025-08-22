@@ -22,6 +22,26 @@ export default async function ThankYouPage({ searchParams }: { searchParams?: Pr
   const isGodparent = !!guest?.isGodparent;
   const confirmed = status === 'Confirmed';
 
+  // Load settings for display text
+  let settings: { partyDateDisplay: string; partyTimeDisplay: string; locationDisplay: string; giftNote: string } = {
+    partyDateDisplay: 'Oct 11, 2025',
+    partyTimeDisplay: '3:00 PM',
+    locationDisplay: 'TBA',
+    giftNote:
+      'Your presence is the most precious gift we could ask for. If you wish to bless Lauan further, we would deeply appreciate monetary gifts for his future needs or gift checks from department stores. 💙',
+  };
+  try {
+    const h = await headers();
+    const host = h.get('x-forwarded-host') || h.get('host');
+    const proto = h.get('x-forwarded-proto') || 'http';
+    const origin = host ? `${proto}://${host}` : '';
+    const resSettings = await fetch(`${origin}/api/settings`, { headers: { Accept: 'application/json' }, cache: 'no-store' });
+    if (resSettings.ok) {
+      const json = await resSettings.json().catch(() => null);
+      if (json?.settings) settings = json.settings;
+    }
+  } catch {}
+
   const isAdmin = !!(await cookies()).get('admin_session');
 
   return (
@@ -40,7 +60,7 @@ export default async function ThankYouPage({ searchParams }: { searchParams?: Pr
                   <p>We’re excited you’ll be joining us for Lauan’s 1st birthday celebration!</p>
                 )
               ) : (
-                <p>We understand you won’t be able to make it. Thank you for letting us know.</p>
+                <p>We understand you won’t be able to make it. Thank you for letting us know. You can change your response any time.</p>
               )}
             </div>
 
@@ -65,13 +85,13 @@ export default async function ThankYouPage({ searchParams }: { searchParams?: Pr
             </div>
 
             <div className="party-details">
-              <div className="detail-item"><strong><span className="material-symbols-outlined">event</span> Date</strong><p>Oct 11, 2025</p></div>
-              <div className="detail-item"><strong><span className="material-symbols-outlined">schedule</span> Time</strong><p>3:00 PM</p></div>
-              <div className="detail-item"><strong><span className="material-symbols-outlined">location_on</span> Location</strong><p>TBA</p></div>
+              <div className="detail-item"><strong><span className="material-symbols-outlined">event</span> Date</strong><p>{settings.partyDateDisplay}</p></div>
+              <div className="detail-item"><strong><span className="material-symbols-outlined">schedule</span> Time</strong><p>{settings.partyTimeDisplay}</p></div>
+              <div className="detail-item"><strong><span className="material-symbols-outlined">location_on</span> Location</strong><p>{settings.locationDisplay}</p></div>
             </div>
 
             <div className="gift-note">
-              Your presence is the most precious gift we could ask for. If you wish to bless Lauan further, we would deeply appreciate monetary gifts for his future needs or gift checks from department stores. 💙
+              {settings.giftNote}
             </div>
           </>
         ) : (
@@ -81,9 +101,9 @@ export default async function ThankYouPage({ searchParams }: { searchParams?: Pr
             </div>
             <p>Your response has been recorded.</p>
             <div className="party-details">
-              <div className="detail-item"><strong><span className="material-symbols-outlined">event</span> Date</strong><p>Oct 11, 2025</p></div>
-              <div className="detail-item"><strong><span className="material-symbols-outlined">schedule</span> Time</strong><p>3:00 PM</p></div>
-              <div className="detail-item"><strong><span className="material-symbols-outlined">location_on</span> Location</strong><p>TBA</p></div>
+              <div className="detail-item"><strong><span className="material-symbols-outlined">event</span> Date</strong><p>{settings.partyDateDisplay}</p></div>
+              <div className="detail-item"><strong><span className="material-symbols-outlined">schedule</span> Time</strong><p>{settings.partyTimeDisplay}</p></div>
+              <div className="detail-item"><strong><span className="material-symbols-outlined">location_on</span> Location</strong><p>{settings.locationDisplay}</p></div>
             </div>
           </>
         )}

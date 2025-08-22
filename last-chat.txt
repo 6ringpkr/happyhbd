@@ -1,0 +1,43 @@
+• Save fix: I added creation of the Settings sheet if it’s missing. Your inline save was hitting a non-existent sheet, so upserts went nowhere. Now updateSettings    
+    auto-creates the sheet and seeds header row so the inline editor on /invites/[guestId] should persist.
+
+  Answers to your critical questions
+  • 1. Should godparents be able to decline the godparent role? And if they do, should RSVP still proceed?
+    • Yes and yes.
+    • Logic:
+      • Godparent role is independent from attendance. Someone can decline being a godparent but still attend.
+      • Flow:
+        • If invited as godparent: show Accept/Decline. On decline, mark a field (e.g., godparentDeclinedAt) or clear godparent flags; do NOT block RSVP UI. Let them   
+          RSVP normally.
+  • 2. If RSVP is Declined (regular or VIP), should we still let them save the invitation?
+    • Yes, but optional.
+    • Logic:
+      • “Save invitation” (QR/link) helps them revisit details or change mind. It’s a low-cost affordance and improves UX.
+      • Implementation:
+        • Keep QR/download visible after a Declined RSVP. Optionally show a “Change your response” hint with a link back to the invite.
+  • 3. Patterns of questions and logical breakdown
+    • Role vs attendance
+      • Independent decisions: Accept Godparent? Attend event?
+      • Outcomes:
+        • Accept Godparent + Confirm attendance → proceed normally.
+        • Accept Godparent + Decline attendance → valid; keep godparent status.
+        • Decline Godparent + Confirm attendance → valid; attend as regular guest.
+        • Decline Godparent + Decline attendance → valid.
+    • UI gating
+      • If godparent and has not answered role: show Accept/Decline prompt first.
+      • Regardless of role decision, always show RSVP (attendance is separate).
+    • Data model additions
+      • Add godparentDeclinedAt boolean/date or set isGodparent=false once declined (but keep VIP styling optional).
+      • Keep existing godparentAcceptedAt and godparentFullName for acceptance.
+    • Post-decision affordances
+      • After any RSVP status, show QR/link block so they can save/share the invite or return later.
+      • If Declined, consider a sentence like “You can change your response anytime before [deadline].”
+  • Implemented:
+    • Inline admin editor directly on /invites/[guestId] with Save to Sheets.
+    • Countdown fixed to avoid “thousands” by using CSS --value counter and resetting content.
+    • Pixel route retired and removed from layout CSS.
+
+  If you want, I can:
+  • Add a godparentDeclinedAt field and wire a decline button to persist it.
+  • Ensure RSVP UX always shows QR/download after Declined.
+  • Add “Change your response” link logic.

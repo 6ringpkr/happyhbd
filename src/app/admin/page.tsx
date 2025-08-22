@@ -5,6 +5,7 @@ import { Header } from './components/Header';
 import { Stats } from './components/Stats';
 import { InvitationsPanel } from './components/InvitationsPanel';
 import { GuestsTable } from './components/GuestsTable';
+import { SettingsPanel } from './components/SettingsPanel';
 
 type Guest = {
   name: string;
@@ -14,6 +15,7 @@ type Guest = {
   isGodparent: boolean;
   godparentAcceptedAt: string;
   godparentFullName: string;
+  godparentDeclinedAt: string;
 };
 
 export default function AdminPage() {
@@ -169,14 +171,49 @@ export default function AdminPage() {
       setBulkBusy(true);
       if (!bulkFile) { setBulkHint('Choose a CSV file first.'); return; }
       const text = await bulkFile.text();
-      const rows = text.split(/\r?\n/).filter(Boolean);
-      const header = (rows.shift() || '').split(',').map((s) => s.trim().toLowerCase());
-      const idxName = header.indexOf('name');
-      const idxGod = header.indexOf('isgodparent');
+      // Robust CSV parsing with quoted field support
+      function splitCsvLine(line: string): string[] {
+        const result: string[] = [];
+        let current = '';
+        let inQuotes = false;
+        for (let i = 0; i < line.length; i++) {
+          const char = line[i];
+          if (char === '"') {
+            if (inQuotes && line[i + 1] === '"') {
+              current += '"';
+              i++; // skip escaped quote
+            } else {
+              inQuotes = !inQuotes;
+            }
+          } else if (char === ',' && !inQuotes) {
+            result.push(current);
+            current = '';
+          } else {
+            current += char;
+          }
+        }
+        result.push(current);
+        return result.map((v) => {
+          const trimmed = v.trim();
+          if (trimmed.startsWith('"') && trimmed.endsWith('"')) {
+            return trimmed.slice(1, -1).replace(/""/g, '"');
+          }
+          return trimmed;
+        });
+      }
+
+      const lines = text.split(/\r?\n/).filter((l) => l.trim().length > 0);
+      const header = (lines.shift() || 'name').trim();
+      const headerCols = splitCsvLine(header).map((s) => s.trim().toLowerCase());
+      const idxName = headerCols.indexOf('name');
+      const idxGod = headerCols.indexOf('isgodparent');
       if (idxName === -1) { setBulkHint('CSV missing "name" column.'); return; }
-      const items = rows.map((r) => {
-        const cols = r.split(',');
-        return { name: (cols[idxName] || '').trim(), isGodparent: String(cols[idxGod] || '').trim().toLowerCase() === 'true' };
+      const items = lines.map((line) => {
+        const cols = splitCsvLine(line);
+        const name = (cols[idxName] || '').trim();
+        const godRaw = (idxGod >= 0 ? String(cols[idxGod] || '') : '').trim().toLowerCase();
+        const isGodparent = godRaw === 'true' || godRaw === '1' || godRaw === 'yes' || godRaw === 'on';
+        return { name, isGodparent };
       }).filter((i) => i.name);
       if (!items.length) { setBulkHint('No valid rows found.'); return; }
       const res = await fetch('/api/bulk-invites', { method: 'POST', headers: { 'content-type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ items }) });
@@ -266,6 +303,13 @@ export default function AdminPage() {
           sectionCard={sectionCard}
           tabListClass={tabListClass}
           tabTriggerClass={tabTriggerClass}
+        />
+
+        <SettingsPanel
+          sectionCard={sectionCard}
+          inputClass={inputClass}
+          textMuted={textMuted}
+          btnPrimary={btnPrimary}
         />
 
         <GuestsTable

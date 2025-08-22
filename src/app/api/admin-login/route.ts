@@ -13,7 +13,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid password' }, { status: 401 });
   }
   const res = NextResponse.json({ ok: true });
-  res.cookies.set(COOKIE_NAME, '1', { path: '/', httpOnly: true, sameSite: 'lax', secure: false, maxAge: 60 * 60 * 8 });
+  res.cookies.set(COOKIE_NAME, '1', {
+    path: '/',
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 60 * 60 * 8,
+  });
   return res;
 }
 

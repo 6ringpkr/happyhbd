@@ -34,6 +34,7 @@ async function getSheetsClient() {
 }
 
 const SHEET_NAME = (process.env.GOOGLE_SHEET_NAME || 'Sheet1') as string;
+const SETTINGS_SHEET_NAME = (process.env.GOOGLE_SETTINGS_SHEET_NAME || 'Settings') as string;
 
 export interface Guest {
   name: string;
@@ -43,6 +44,7 @@ export interface Guest {
   isGodparent: boolean;
   godparentAcceptedAt: string; // YYYY-MM-DD when Godparent role accepted
   godparentFullName: string; // Full legal name for dedication document
+  godparentDeclinedAt: string; // YYYY-MM-DD when Godparent role declined
 }
 
 /**
@@ -81,11 +83,12 @@ export async function addGuest(name: string, isGodparent: boolean): Promise<Gues
     isGodparent,
     godparentAcceptedAt: '',
     godparentFullName: '',
+    godparentDeclinedAt: '',
   };
 
   await sheets.spreadsheets.values.append({
     spreadsheetId,
-    range: `${SHEET_NAME}!A:G`,
+    range: `${SHEET_NAME}!A:H`,
     valueInputOption: "USER_ENTERED",
     requestBody: {
       values: [[
@@ -96,6 +99,7 @@ export async function addGuest(name: string, isGodparent: boolean): Promise<Gues
         newGuest.isGodparent,
         newGuest.godparentAcceptedAt,
         newGuest.godparentFullName,
+        newGuest.godparentDeclinedAt,
       ]],
     },
   });
@@ -105,33 +109,39 @@ export async function addGuest(name: string, isGodparent: boolean): Promise<Gues
 
 export async function findGuestByUniqueId(uniqueId: string): Promise<(Guest & { row: number }) | null> {
   const { sheets, spreadsheetId } = await getSheetsClient();
-  const doc = await sheets.spreadsheets.get({
+  const res = await sheets.spreadsheets.values.get({
     spreadsheetId,
-    ranges: [`${SHEET_NAME}!A:G`],
-    includeGridData: true,
+    range: `${SHEET_NAME}!A:H`,
   });
-
-  const sheet = doc.data.sheets?.[0];
-  const grid = sheet?.data?.[0]?.rowData || [];
-  for (let i = 0; i < grid.length; i++) {
-    const rowData = grid[i]?.values || [];
-    const cellB = rowData[1]?.effectiveValue;
-    const cellBString = cellB?.stringValue ?? (cellB?.numberValue !== undefined ? String(cellB.numberValue) : undefined);
-    if (cellBString === uniqueId) {
-      const name = rowData[0]?.formattedValue || '';
-      const status = rowData[2]?.formattedValue || '';
-      const rsvpAt = rowData[3]?.formattedValue || '';
-      const isGodparent = (rowData[4]?.formattedValue || '').toString().toUpperCase() === 'TRUE';
-      const godparentAcceptedAt = rowData[5]?.formattedValue || '';
-      const godparentFullName = rowData[6]?.formattedValue || '';
+  
+  const rows: string[][] = (res.data.values as unknown as string[][]) || [];
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i] || [];
+    const name = (row[0] || '').toString();
+    const rowUniqueId = (row[1] || '').toString();
+    
+    // Skip header row
+    if (i === 0) {
+      const maybeHeader = [name.toLowerCase(), rowUniqueId.toLowerCase()].join(' ');
+      if (maybeHeader.includes('name') && maybeHeader.includes('unique')) continue;
+    }
+    
+    if (rowUniqueId === uniqueId) {
+      const status = (row[2] || 'Pending') as Guest['status'];
+      const rsvpAt = (row[3] || '').toString();
+      const isGodparent = String(row[4] || '').toUpperCase() === 'TRUE';
+      const godparentAcceptedAt = (row[5] || '').toString();
+      const godparentFullName = (row[6] || '').toString();
+      const godparentDeclinedAt = (row[7] || '').toString();
       return {
         name,
         uniqueId,
-        status: status as Guest['status'],
+        status,
         rsvpAt,
         isGodparent,
         godparentAcceptedAt,
         godparentFullName,
+        godparentDeclinedAt,
         row: i + 1,
       };
     }
@@ -173,11 +183,26 @@ export async function acceptGodparentRole(uniqueId: string, fullName: string): P
   });
 }
 
+export async function declineGodparentRole(uniqueId: string): Promise<void> {
+  const guest = await findGuestByUniqueId(uniqueId);
+  if (!guest) {
+    throw new Error('Guest not found');
+  }
+  const today = new Date().toISOString().split('T')[0];
+  const { sheets, spreadsheetId } = await getSheetsClient();
+  await sheets.spreadsheets.values.update({
+    spreadsheetId,
+    range: `${SHEET_NAME}!H${guest.row}`,
+    valueInputOption: 'USER_ENTERED',
+    requestBody: { values: [[today]] },
+  });
+}
+
 export async function listGuests(): Promise<Array<Guest & { row: number }>> {
   const { sheets, spreadsheetId } = await getSheetsClient();
   const res = await sheets.spreadsheets.values.get({
     spreadsheetId,
-    range: `${SHEET_NAME}!A:G`,
+    range: `${SHEET_NAME}!A:H`,
   });
   const rows: string[][] = (res.data.values as unknown as string[][]) || [];
   const results: Array<Guest & { row: number }> = [];
@@ -195,7 +220,8 @@ export async function listGuests(): Promise<Array<Guest & { row: number }>> {
     const isGodparent = String(row[4] || '').toUpperCase() === 'TRUE';
     const godparentAcceptedAt = (row[5] || '').toString();
     const godparentFullName = (row[6] || '').toString();
-    results.push({ name, uniqueId, status, rsvpAt, isGodparent, godparentAcceptedAt, godparentFullName, row: i + 1 });
+    const godparentDeclinedAt = (row[7] || '').toString();
+    results.push({ name, uniqueId, status, rsvpAt, isGodparent, godparentAcceptedAt, godparentFullName, godparentDeclinedAt, row: i + 1 });
   }
   return results;
 }
@@ -231,19 +257,200 @@ export async function addGuestsBulk(items: Array<{ name: string; isGodparent: bo
       isGodparent: item.isGodparent,
       godparentAcceptedAt: '',
       godparentFullName: '',
+      godparentDeclinedAt: '',
     };
     created.push(g);
-    values.push([g.name, g.uniqueId, g.status, g.rsvpAt, g.isGodparent, g.godparentAcceptedAt, g.godparentFullName]);
+    values.push([g.name, g.uniqueId, g.status, g.rsvpAt, g.isGodparent, g.godparentAcceptedAt, g.godparentFullName, g.godparentDeclinedAt]);
   }
 
   await sheets.spreadsheets.values.append({
     spreadsheetId,
-    range: `${SHEET_NAME}!A:G`,
+    range: `${SHEET_NAME}!A:H`,
     valueInputOption: 'USER_ENTERED',
     requestBody: { values },
   });
 
   return created;
+}
+
+
+export interface Settings {
+  partyDateDisplay: string; // e.g., "Oct 11, 2025"
+  partyTimeDisplay: string; // e.g., "3:00 PM"
+  locationDisplay: string;  // e.g., "TBA"
+  giftNote: string;         // long paragraph shown under gift note
+  countdownISO: string;     // ISO datetime for countdown timer
+  // Extended fields for future template customization
+  eventTitle: string;       // e.g., "First Birthday"
+  celebrantName: string;    // e.g., "Lauan"
+  celebrantImageUrl: string; // optional hero/wordmark image for celebrant
+  venueAddress: string;     // full address
+  venueMapUrl: string;      // map link
+  dressCode: string;        // e.g., "Smart casual"
+  registryNote: string;     // freeform registry or gift guidance
+  rsvpDeadlineISO: string;  // optional RSVP-by date
+  hostNames: string;        // e.g., "Allan & Gia"
+  themeName: string;        // e.g., "Classic", "Pixel"
+  backgroundImageUrl: string; // background image for template
+  accentColor: string;      // hex color like #123456
+  invitationTemplate: string; // template key: classic | pixel | ...
+}
+
+export const DEFAULT_SETTINGS: Settings = {
+  partyDateDisplay: 'Oct 11, 2025',
+  partyTimeDisplay: '3:00 PM',
+  locationDisplay: 'TBA',
+  giftNote:
+    "Your presence is the most precious gift we could ask for. If you wish to bless Lauan further, we would deeply appreciate monetary gifts for his future needs or gift checks from department stores. 💙",
+  countdownISO: '2025-10-11T15:00:00',
+  eventTitle: '',
+  celebrantName: '',
+  celebrantImageUrl: '',
+  venueAddress: '',
+  venueMapUrl: '',
+  dressCode: '',
+  registryNote: '',
+  rsvpDeadlineISO: '',
+  hostNames: '',
+  themeName: '',
+  backgroundImageUrl: '',
+  accentColor: '',
+  invitationTemplate: 'classic',
+};
+
+/**
+ * Reads key-value pairs from the Settings sheet (A: key, B: value) and merges with defaults.
+ */
+export async function getSettings(): Promise<Settings> {
+  const { sheets, spreadsheetId } = await getSheetsClient();
+  try {
+    const res = await sheets.spreadsheets.values.get({
+      spreadsheetId,
+      range: `${SETTINGS_SHEET_NAME}!A:B`,
+    });
+    const rows: string[][] = (res.data.values as unknown as string[][]) || [];
+    const kv: Record<string, string> = {};
+    for (let i = 0; i < rows.length; i++) {
+      const [key, value] = rows[i] || [];
+      if (!key) continue;
+      kv[String(key).trim()] = (value ?? '').toString();
+    }
+    return {
+      partyDateDisplay: kv.partyDateDisplay ?? DEFAULT_SETTINGS.partyDateDisplay,
+      partyTimeDisplay: kv.partyTimeDisplay ?? DEFAULT_SETTINGS.partyTimeDisplay,
+      locationDisplay: kv.locationDisplay ?? DEFAULT_SETTINGS.locationDisplay,
+      giftNote: kv.giftNote ?? DEFAULT_SETTINGS.giftNote,
+      countdownISO: kv.countdownISO ?? DEFAULT_SETTINGS.countdownISO,
+      eventTitle: kv.eventTitle ?? DEFAULT_SETTINGS.eventTitle,
+      celebrantName: kv.celebrantName ?? DEFAULT_SETTINGS.celebrantName,
+      celebrantImageUrl: kv.celebrantImageUrl ?? DEFAULT_SETTINGS.celebrantImageUrl,
+      venueAddress: kv.venueAddress ?? DEFAULT_SETTINGS.venueAddress,
+      venueMapUrl: kv.venueMapUrl ?? DEFAULT_SETTINGS.venueMapUrl,
+      dressCode: kv.dressCode ?? DEFAULT_SETTINGS.dressCode,
+      registryNote: kv.registryNote ?? DEFAULT_SETTINGS.registryNote,
+      rsvpDeadlineISO: kv.rsvpDeadlineISO ?? DEFAULT_SETTINGS.rsvpDeadlineISO,
+      hostNames: kv.hostNames ?? DEFAULT_SETTINGS.hostNames,
+      themeName: kv.themeName ?? DEFAULT_SETTINGS.themeName,
+      backgroundImageUrl: kv.backgroundImageUrl ?? DEFAULT_SETTINGS.backgroundImageUrl,
+      accentColor: kv.accentColor ?? DEFAULT_SETTINGS.accentColor,
+      invitationTemplate: kv.invitationTemplate ?? DEFAULT_SETTINGS.invitationTemplate,
+    };
+  } catch {
+    // If the Settings sheet doesn't exist yet, return defaults
+    return { ...DEFAULT_SETTINGS };
+  }
+}
+
+/**
+ * Upserts provided settings into the Settings sheet. Values are stored as plain strings.
+ */
+export async function updateSettings(partial: Partial<Settings>): Promise<Settings> {
+  const { sheets, spreadsheetId } = await getSheetsClient();
+  // Ensure the Settings sheet exists
+  await ensureSheetExists(sheets, spreadsheetId, SETTINGS_SHEET_NAME);
+  // Load current rows to find indices
+  let res: { data: { values?: string[][] } };
+  try {
+    res = (await sheets.spreadsheets.values.get({
+      spreadsheetId,
+      range: `${SETTINGS_SHEET_NAME}!A:B`,
+    })) as unknown as { data: { values?: string[][] } };
+  } catch {
+    res = { data: { values: [] as string[][] } };
+  }
+  const rows: string[][] = (res.data.values || []) as string[][];
+  const keyToRowIndex: Record<string, number> = {};
+  for (let i = 0; i < rows.length; i++) {
+    const k = (rows[i]?.[0] || '').toString();
+    if (k) keyToRowIndex[k] = i + 1; // 1-indexed for Sheets ranges
+  }
+
+  // Prepare updates; do simple per-key updates/appends
+  const entries = Object.entries(partial).filter(([, v]) => typeof v === 'string');
+  for (const [key, value] of entries) {
+    const row = keyToRowIndex[key];
+    if (row) {
+      // Update existing row's value in column B
+      await sheets.spreadsheets.values.update({
+        spreadsheetId,
+        range: `${SETTINGS_SHEET_NAME}!B${row}`,
+        valueInputOption: 'USER_ENTERED',
+        requestBody: { values: [[value as string]] },
+      });
+    } else {
+      // Append new key-value row
+      await sheets.spreadsheets.values.append({
+        spreadsheetId,
+        range: `${SETTINGS_SHEET_NAME}!A:B`,
+        valueInputOption: 'USER_ENTERED',
+        requestBody: { values: [[key, value as string]] },
+      });
+    }
+  }
+
+  // Return merged settings
+  const current = await getSettings();
+  return current;
+}
+
+
+/**
+ * Ensures a worksheet with the given title exists. Creates it if missing.
+ */
+async function ensureSheetExists(
+  sheetsClient: ReturnType<typeof google.sheets>,
+  spreadsheetId: string,
+  title: string
+) {
+  try {
+    const meta = await sheetsClient.spreadsheets.get({ spreadsheetId });
+    const exists = (meta.data.sheets || []).some((s) => s.properties?.title === title);
+    if (!exists) {
+      await sheetsClient.spreadsheets.batchUpdate({
+        spreadsheetId,
+        requestBody: {
+          requests: [
+            {
+              addSheet: {
+                properties: {
+                  title,
+                },
+              },
+            },
+          ],
+        },
+      });
+      // Seed header row for readability
+      await sheetsClient.spreadsheets.values.update({
+        spreadsheetId,
+        range: `${title}!A1:B1`,
+        valueInputOption: 'USER_ENTERED',
+        requestBody: { values: [["key", "value"]] },
+      });
+    }
+  } catch (e) {
+    // Best effort; if this fails, later calls will throw meaningful errors
+  }
 }
 
 

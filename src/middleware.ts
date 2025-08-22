@@ -4,7 +4,7 @@ const COOKIE_NAME = 'admin_session';
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const isProtected = pathname.startsWith('/admin') || pathname.startsWith('/api/generate-invite') || pathname.startsWith('/api/updates/post') || pathname.startsWith('/api/bulk-invites');
+  const isProtected = pathname.startsWith('/admin') || pathname.startsWith('/api/generate-invite') || pathname.startsWith('/api/bulk-invites');
   if (isProtected) {
     const session = request.cookies.get(COOKIE_NAME)?.value;
     if (!session) {
@@ -17,7 +17,7 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/api/generate-invite', '/api/updates/post', '/api/bulk-invites'],
+  matcher: ['/admin/:path*', '/api/generate-invite', '/api/bulk-invites'],
 };
 
 

@@ -114,10 +114,60 @@
     margin-bottom: 15px;
 }
 
-#timer {
-    font-size: 2em;
-    font-weight: 700;
-    color: #007bff;
+.countdown-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.countdown-box {
+    background-color: #0f62fe;
+    color: white;
+    border-radius: 12px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 18px rgba(15, 98, 254, 0.25);
+    transform: translateY(0);
+    transition: transform 0.2s ease;
+}
+
+.countdown-box .countdown-number {
+    font-family: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 2.25rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+/* DaisyUI-like countdown rendering using CSS counter */
+.countdown-box .countdown-number::after {
+    content: counter(value);
+    counter-reset: value var(--value);
+}
+
+.countdown-box .countdown-label {
+    opacity: 0.9;
+    margin-top: 6px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+/* Tick animation on value change */
+@keyframes tickBounce {
+    0% { transform: translateY(0); }
+    35% { transform: translateY(-6px); }
+    100% { transform: translateY(0); }
+}
+
+.countdown-box.tick {
+    animation: tickBounce 300ms ease-in-out;
+}
+
+@media (max-width: 420px) {
+    .countdown-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 .rsvp-form {
@@ -207,6 +257,15 @@
 .microcopy {
     font-size: 0.85em;
     color: #475569;
+}
+
+.invite-input {
+    display: block;
+    width: 100%;
+    padding: 0.55rem 0.7rem;
+    border-radius: 8px;
+    border: 1px solid #d9dcff;
+    background: #fff;
 }
 
 .qr-code {
