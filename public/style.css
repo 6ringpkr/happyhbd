@@ -1,8 +1,11 @@
 /* Scope presentation to invite pages only to avoid global overrides */
 .invite-page {
     font-family: 'Poppins', sans-serif;
-    background-color: #f7f9fc;
-    color: #003366; /* Dark Blue */
+    background:
+        linear-gradient(0deg, rgba(255,255,255,0.9), rgba(255,255,255,0.9)),
+        url('/pattern.png') center center / 360px repeat fixed,
+        #0b1b2f;
+    color: #0f2b46;
     min-height: 100vh;
     margin: 0;
     padding: 20px;
@@ -23,21 +26,88 @@
     margin-right: 6px;
 }
 
-.card {
-    background-color: #ffffff;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 51, 102, 0.12);
-    max-width: 640px;
+.invite-page .card {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(8px);
+    border-radius: 22px;
+    box-shadow: 0 20px 40px rgba(24, 56, 113, 0.12), 0 2px 8px rgba(24, 56, 113, 0.05);
+    max-width: 720px;
     width: 100%;
     text-align: center;
-    padding: 40px 28px;
+    padding: 44px 30px;
     border: 1px solid #d6eaff;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Hero avatar at top of card */
+.invite-hero {
+    display: flex;
+    justify-content: center;
+    margin: 6px 0 14px 0;
+}
+
+.hero-avatar {
+    position: relative;
+    width: clamp(96px, 22vw, 140px);
+    aspect-ratio: 1 / 1;
+    border-radius: 9999px;
+    overflow: hidden;
+    box-shadow: 0 10px 24px rgba(15, 75, 139, 0.18);
+    background: #eef4ff;
+}
+
+.hero-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.92;
+}
+
+.hero-ring {
+    position: absolute;
+    inset: 0;
+}
+
+.hero-ring circle {
+    fill: none;
+    stroke: #1c82ff;
+    stroke-width: 6;
+    stroke-linecap: round;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    animation: ringProgress 5s ease-out forwards;
+}
+
+.hero-avatar.loaded .hero-ring {
+    transition: opacity 400ms ease;
+    opacity: 0;
+}
+
+@keyframes ringProgress {
+    0% { stroke-dashoffset: 100; }
+    100% { stroke-dashoffset: 0; }
+}
+
+/* Decorative face overlay */
+.invite-page .card::after {
+    content: "";
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: clamp(120px, 22vw, 200px);
+    aspect-ratio: 1 / 1;
+    background: url('/face.png') no-repeat center / contain;
+    opacity: 0.7; /* ~70% opacity as requested */
+    pointer-events: none;
+    mix-blend-mode: multiply;
+    filter: contrast(1.05) saturate(0.95);
 }
 
 .card-header h1 {
     font-family: 'Dancing Script', 'Poppins', sans-serif;
-    font-size: 2.6em;
-    color: #005a9c;
+    font-size: clamp(2.2rem, 4vw, 3rem);
+    color: #0f4b8b;
     margin: 0 0 6px 0;
 }
 
@@ -47,26 +117,30 @@
 }
 
 .card-body h2 {
-    font-size: 1.35em;
-    font-weight: 500;
+    font-size: clamp(1.1rem, 2.2vw, 1.4rem);
+    font-weight: 600;
+    letter-spacing: .01em;
     margin: 10px 0 6px 0;
+    color: #0f4b8b;
 }
 
 .celebrant-name {
-    width: min(100%, 360px);
+    width: min(100%, 380px);
     aspect-ratio: 1 / 1;
     height: auto;
     display: block;
     margin: 10px auto 8px auto;
+    filter: drop-shadow(0 8px 20px rgba(15, 75, 139, 0.15));
 }
 
 .godparent-letter {
-    background-color: #e9f5ff;
-    border-left: 4px solid #007bff;
+    background: linear-gradient(180deg, #eaf5ff 0%, #e6f3ff 100%);
+    border-left: 4px solid #1c82ff;
     margin: 30px 0;
     padding: 20px;
     text-align: left;
-    border-radius: 8px;
+    border-radius: 12px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
 }
 
 .godparent-letter h3 {
@@ -93,7 +167,7 @@
     align-items: center;
     gap: 6px;
     font-size: 1.05em;
-    color: #005a9c;
+    color: #0f4b8b;
 }
 
 .detail-item p {
@@ -109,8 +183,8 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-weight: 600;
-    color: #005a9c;
+    font-weight: 700;
+    color: #0f4b8b;
     margin-bottom: 15px;
 }
 
@@ -121,15 +195,15 @@
 }
 
 .countdown-box {
-    background-color: #0f62fe;
+    background: linear-gradient(180deg, #1877ff 0%, #0f62fe 90%);
     color: white;
-    border-radius: 12px;
-    padding: 12px;
+    border-radius: 14px;
+    padding: 14px 12px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 6px 18px rgba(15, 98, 254, 0.25);
+    box-shadow: 0 10px 24px rgba(15, 98, 254, 0.25);
     transform: translateY(0);
     transition: transform 0.2s ease;
 }
@@ -178,7 +252,7 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    color: #005a9c;
+    color: #0f4b8b;
 }
 
 .rsvp-form form {
@@ -190,16 +264,18 @@
 
 .rsvp-form button,
 .invite-button {
-    padding: 0.8rem 1.5rem;
+    padding: 0.9rem 1.6rem;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     font-size: 1rem;
-    font-weight: 600;
+    font-weight: 700;
+    letter-spacing: .01em;
     cursor: pointer;
-    transition: transform 0.2s;
+    transition: transform 0.2s, box-shadow 0.2s ease;
     display: inline-flex;
     align-items: center;
     text-decoration: none;
+    box-shadow: 0 6px 18px rgba(15, 75, 139, 0.12);
 }
 
 .rsvp-form button:hover,
@@ -222,27 +298,28 @@
 
 /* Variants */
 .invite-button.primary {
-    background-color: #007bff;
+    background: linear-gradient(180deg, #1c82ff 0%, #0f62fe 100%);
     color: white;
 }
 
 .rsvp-form button[value="Confirmed"],
 .invite-button.confirm {
-    background-color: #28a745;
+    background: linear-gradient(180deg, #28c76f 0%, #22a14b 95%);
     color: white;
 }
 
 .rsvp-form button.decline,
 .invite-button.decline {
-    background-color: #dc3545;
+    background: linear-gradient(180deg, #ff6b7a 0%, #dc3545 95%);
     color: white;
 }
 
 .rsvp-confirmed {
     margin-top: 30px;
-    background: #e9f5ff;
-    padding: 15px;
-    border-radius: 8px;
+    background: linear-gradient(180deg, #eaf5ff 0%, #e6f3ff 100%);
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid #d6eaff;
 }
 
 @media (min-width: 640px) {
@@ -277,4 +354,16 @@
     margin-top: 16px;
     font-size: 0.95em;
     color: #334155;
+}
+
+/* Inputs in godparent letter */
+.godparent-letter input[type="text"],
+.invite-input {
+    display: block;
+    width: 100%;
+    padding: 0.6rem 0.85rem 0.6rem 2.4rem;
+    border-radius: 10px;
+    border: 1px solid #d6eaff;
+    background: #fff;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
 }

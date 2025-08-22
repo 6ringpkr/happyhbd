@@ -6,6 +6,9 @@
     "dev": "next dev -p 4000",
     "build": "next build",
     "start": "next start -p 4000",
+    "preview": "npm run build && next start -p 4000",
+    "watch:build": "chokidar \"src/**/*\" \"public/**/*\" \"next.config.*\" \"tsconfig.json\" \"**/*.css\" -c \"npm run build\"",
+    "watch:preview": "concurrently -k -n BUILD,START -c blue,green \"npm:watch:build\" \"nodemon --watch .next --ext js,json --delay 200ms --exec \\\"next start -p 4000\\\"\"",
     "lint": "next lint"
   },
   "dependencies": {
@@ -33,6 +36,9 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.4.6",
+    "chokidar-cli": "^3.0.0",
+    "concurrently": "^9.1.2",
+    "nodemon": "^3.1.7",
     "tailwindcss": "^4",
     "tw-animate-css": "^1.3.6",
     "typescript": "^5"

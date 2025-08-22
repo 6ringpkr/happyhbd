@@ -46,10 +46,19 @@ export default async function InvitePage({ params, searchParams }: { params: Pro
   return (
     <div className="invite-page">
       {guest ? (
-        <div className="card">
+        <div className="card has-hero">
           <div className="card-header">
             <h1>Dear {guest.name},</h1>
             <p>You&apos;re invited to celebrate a very special milestone.</p>
+          </div>
+
+          <div className="invite-hero">
+            <div className="hero-avatar" aria-label="Celebrant portrait loading preview">
+              <img src="/face.png" alt="Celebrant portrait" loading="eager" />
+              <svg className="hero-ring" viewBox="0 0 120 120" aria-hidden="true">
+                <circle cx="60" cy="60" r="56" pathLength="100"></circle>
+              </svg>
+            </div>
           </div>
 
           <div className="card-body">
@@ -70,16 +79,18 @@ export default async function InvitePage({ params, searchParams }: { params: Pro
             <div className="godparent-letter">
               <h3>A Special Request</h3>
               <p>We would be honored to have you as Ninong/Ninang. If you accept, please confirm your full legal name for the dedication certificate. Your information will remain private.</p>
-              <form id="accept-form" action="/api/godparent-accept" method="POST" style={{ marginTop: '1rem', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '.5rem', alignItems: 'center' }}>
+              <form id="accept-form" action="/api/godparent-accept" method="POST" style={{ marginTop: '1rem', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '.75rem', alignItems: 'center' }}>
                 <input type="hidden" name="uniqueId" value={guest.uniqueId} />
-                <div style={{ position: 'relative', maxWidth: 320, width: '100%' }}>
+                <div style={{ position: 'relative', maxWidth: 360, width: '100%' }}>
                   <span className="material-symbols-outlined" style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#666' }}>badge</span>
                   <label htmlFor="fullName" className="microcopy" style={{ display: 'block', textAlign: 'left', marginBottom: 4 }}>Full legal name</label>
-                  <input id="fullName" type="text" name="fullName" placeholder="Full legal name" required style={{ padding: '.6rem', paddingLeft: 40, borderRadius: 8, border: '1px solid #d9dcff', maxWidth: 320, width: '100%' }} />
+                  <input id="fullName" type="text" name="fullName" placeholder="Full legal name" className="invite-input" style={{ paddingLeft: 40, maxWidth: 360 }} />
                   <div className="microcopy" style={{ marginTop: 6 }}>Used only for the dedication certificate.</div>
                 </div>
-                <button type="submit" name="accept" value="yes" className="invite-button confirm"><span className="material-symbols-outlined">check_circle</span> I accept to be Godparent</button>
-                <button type="submit" name="decline" value="yes" className="invite-button decline"><span className="material-symbols-outlined">cancel</span> I can’t be a Godparent</button>
+                <div style={{ display: 'flex', gap: '.75rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+                  <button type="submit" name="accept" value="yes" className="invite-button confirm"><span className="material-symbols-outlined">check_circle</span> I accept to be Godparent</button>
+                  <button type="submit" name="decline" value="yes" className="invite-button decline"><span className="material-symbols-outlined">cancel</span> I can’t be a Godparent</button>
+                </div>
               </form>
             </div>
           )}
@@ -226,6 +237,19 @@ export default async function InvitePage({ params, searchParams }: { params: Pro
                 const submitter = e.submitter;
                 // @ts-ignore
                 if (submitter && submitter.name) { data.append(submitter.name, submitter.value || 'yes'); } else { data.append('accept', 'yes'); }
+
+                // Check if declining - fullname not required
+                const isDeclining = submitter?.name === 'decline' || data.get('decline') === 'yes';
+                const fullNameInput = document.getElementById('fullName');
+                const fullName = fullNameInput && fullNameInput.value ? fullNameInput.value.trim() : '';
+
+                // Require fullname only when accepting
+                if (!isDeclining && !fullName) {
+                  alert('Please enter your full legal name to accept the godparent role.');
+                  fullNameInput?.focus();
+                  return;
+                }
+
                 const res = await fetch(af.getAttribute('action') || '/api/godparent-accept', { method: 'POST', body: data, headers: { Accept: 'application/json' } });
                 if (res.ok) {
                   try { const json = await res.json(); const url = new URL(location.href); if (json && json.action === 'accepted') { url.searchParams.set('accepted', '1'); } location.href = url.toString(); } catch { location.reload(); }
@@ -237,14 +261,24 @@ export default async function InvitePage({ params, searchParams }: { params: Pro
               rf.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const data = new FormData(rf);
-                const submitter = e.submitter; // @ts-ignore
-                if (submitter && submitter.name) { data.append(submitter.name, // @ts-ignore
-                  submitter.value); }
+                const submitter = e.submitter;
+                if (submitter && submitter.name) {
+                  // @ts-ignore - submitter is HTMLButtonElement in modern browsers
+                  data.append(submitter.name, submitter.value);
+                }
                 const res = await fetch(rf.getAttribute('action') || '/api/rsvp', { method: 'POST', body: data, headers: { Accept: 'application/json' } });
                 if (res.ok) { const json = await res.json().catch(() => null); if (json?.ok) { const params = new URLSearchParams(location.search); const uid = params.get('uniqueId') || '${guest?.uniqueId || ''}'; const redirectUrl = '/thank-you?uniqueId=' + encodeURIComponent(uid) + '&status=' + encodeURIComponent(json.status); location.href = redirectUrl; } else { location.href = '/thank-you'; } }
                 else { const t = await res.text().catch(()=>''); alert(t || 'Failed to submit RSVP'); }
               });
             }
+
+            // Dummy hero loading ring: complete in ~5s then fade out
+            try {
+              var hero = document.querySelector('.hero-avatar');
+              if (hero) {
+                setTimeout(function(){ hero.classList.add('loaded'); }, 5000);
+              }
+            } catch {}
           })();
         `}
       </Script>

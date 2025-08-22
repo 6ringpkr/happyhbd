@@ -13,6 +13,8 @@ interface HeaderProps {
   lastUpdated: number | null;
   theme: 'dark' | 'light';
   setTheme: (theme: 'dark' | 'light') => void;
+  skin: 'classic' | 'metro';
+  setSkin: (skin: 'classic' | 'metro') => void;
   filtered: Array<{
     name: string;
     uniqueId: string;
@@ -39,6 +41,8 @@ export function Header({
   lastUpdated,
   theme,
   setTheme,
+  skin,
+  setSkin,
   filtered,
   textMuted,
   textSecondary,
@@ -111,6 +115,21 @@ export function Header({
               className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full transition-transform ${knobBase} ${isDark ? 'translate-x-6' : 'translate-x-0'}`}
             />
           </button>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className={`text-sm ${textMuted}`}>Skin</span>
+          <div className={`inline-flex border ${borderCard}`}>
+            <button
+              type="button"
+              onClick={() => setSkin('metro')}
+              className={`px-2 py-1 text-xs ${skin === 'metro' ? 'bg-[#2d89ef] text-white' : ''}`}
+            >Metro</button>
+            <button
+              type="button"
+              onClick={() => setSkin('classic')}
+              className={`px-2 py-1 text-xs ${skin === 'classic' ? (isDark ? 'bg-[#1a1a1a] text-white' : 'bg-[#e9edf7] text-[#0b1020]') : ''}`}
+            >Classic</button>
+          </div>
         </div>
         <Button
           className={`${btnNeutral} focus-visible:ring-2 focus-visible:ring-[#4c6fff]`}

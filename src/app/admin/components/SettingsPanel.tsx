@@ -27,9 +27,10 @@ interface SettingsPanelProps {
   inputClass: string;
   textMuted: string;
   btnPrimary: string;
+  roundedSection: string;
 }
 
-export function SettingsPanel({ sectionCard, inputClass, textMuted, btnPrimary }: SettingsPanelProps) {
+export function SettingsPanel({ sectionCard, inputClass, textMuted, btnPrimary, roundedSection }: SettingsPanelProps) {
   const [settings, setSettings] = useState<Settings | null>(null);
   const [saving, setSaving] = useState(false);
   const [hint, setHint] = useState('');
@@ -69,7 +70,7 @@ export function SettingsPanel({ sectionCard, inputClass, textMuted, btnPrimary }
 
   if (!settings) {
     return (
-      <section className={`${sectionCard} border rounded-xl p-4 space-y-4`}>
+      <section className={`${sectionCard} border ${roundedSection} p-4 space-y-4`}>
         <h2 className="text-lg font-medium">Settings</h2>
         <div className={`${textMuted}`}>Loading…</div>
       </section>
@@ -77,7 +78,7 @@ export function SettingsPanel({ sectionCard, inputClass, textMuted, btnPrimary }
   }
 
   return (
-    <section className={`${sectionCard} border rounded-xl p-4 space-y-4`}>
+    <section className={`${sectionCard} border ${roundedSection} p-4 space-y-4`}>
       <h2 className="text-lg font-medium">Settings</h2>
       <form onSubmit={onSave} className="space-y-6">
         {/* Template & Theme */}
