@@ -14,10 +14,10 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "HBD Admin",
-    template: "%s · HBD"
+    default: "HBD Admin Dashboard",
+    template: "%s · HBD Admin"
   },
-  description: "Professional, mobile-first admin and invites",
+  description: "Professional, mobile-first admin dashboard for managing invites and guests",
 };
 
 export default function RootLayout({
