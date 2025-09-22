@@ -277,7 +277,14 @@ export async function addGuestsBulk(items: Array<{ name: string; isGodparent: bo
 export interface Settings {
   partyDateDisplay: string; // e.g., "Oct 11, 2025"
   partyTimeDisplay: string; // e.g., "3:00 PM"
+  dedicationTimeDisplay: string; // e.g., "2:00 PM"
+  birthdaySnackLocation: string; // e.g., "Main Hall"
   locationDisplay: string;  // e.g., "TBA"
+  // Editable labels
+  dedicationTimeLabel: string; // e.g., "Dedication Time"
+  tableReadyLabel: string; // e.g., "Table's Ready"
+  birthdaySnackLocationLabel: string; // e.g., "Birthday Snack Location"
+  locationLabel: string; // e.g., "Location"
   giftNote: string;         // long paragraph shown under gift note
   countdownISO: string;     // ISO datetime for countdown timer
   // Extended fields for future template customization
@@ -299,7 +306,14 @@ export interface Settings {
 export const DEFAULT_SETTINGS: Settings = {
   partyDateDisplay: 'Oct 11, 2025',
   partyTimeDisplay: '3:00 PM',
+  dedicationTimeDisplay: '2:00 PM',
+  birthdaySnackLocation: 'Main Hall',
   locationDisplay: 'TBA',
+  // Default labels
+  dedicationTimeLabel: 'Dedication Time',
+  tableReadyLabel: 'Table\'s Ready',
+  birthdaySnackLocationLabel: 'Birthday Snack Location',
+  locationLabel: 'Location',
   giftNote:
     "Your presence is the most precious gift we could ask for. If you wish to bless Lauan further, we would deeply appreciate monetary gifts for his future needs or gift checks from department stores. 💙",
   countdownISO: '2025-10-11T15:00:00',
@@ -338,7 +352,14 @@ export async function getSettings(): Promise<Settings> {
     return {
       partyDateDisplay: kv.partyDateDisplay ?? DEFAULT_SETTINGS.partyDateDisplay,
       partyTimeDisplay: kv.partyTimeDisplay ?? DEFAULT_SETTINGS.partyTimeDisplay,
+      dedicationTimeDisplay: kv.dedicationTimeDisplay ?? DEFAULT_SETTINGS.dedicationTimeDisplay,
+      birthdaySnackLocation: kv.birthdaySnackLocation ?? DEFAULT_SETTINGS.birthdaySnackLocation,
       locationDisplay: kv.locationDisplay ?? DEFAULT_SETTINGS.locationDisplay,
+      // Labels
+      dedicationTimeLabel: kv.dedicationTimeLabel ?? DEFAULT_SETTINGS.dedicationTimeLabel,
+      tableReadyLabel: kv.tableReadyLabel ?? DEFAULT_SETTINGS.tableReadyLabel,
+      birthdaySnackLocationLabel: kv.birthdaySnackLocationLabel ?? DEFAULT_SETTINGS.birthdaySnackLocationLabel,
+      locationLabel: kv.locationLabel ?? DEFAULT_SETTINGS.locationLabel,
       giftNote: kv.giftNote ?? DEFAULT_SETTINGS.giftNote,
       countdownISO: kv.countdownISO ?? DEFAULT_SETTINGS.countdownISO,
       eventTitle: kv.eventTitle ?? DEFAULT_SETTINGS.eventTitle,

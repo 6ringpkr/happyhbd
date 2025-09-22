@@ -4,7 +4,14 @@ import { useEffect, useState } from 'react';
 interface Settings {
   partyDateDisplay: string;
   partyTimeDisplay: string;
+  dedicationTimeDisplay: string;
+  birthdaySnackLocation: string;
   locationDisplay: string;
+  // Editable labels
+  dedicationTimeLabel: string;
+  tableReadyLabel: string;
+  birthdaySnackLocationLabel: string;
+  locationLabel: string;
   giftNote: string;
   countdownISO: string;
   eventTitle: string;
@@ -122,12 +129,41 @@ export function SettingsPanel({ sectionCard, inputClass, textMuted, btnPrimary, 
             <input className={`${inputClass} w-full`} value={settings.partyDateDisplay} onChange={(e) => setSettings({ ...settings, partyDateDisplay: e.target.value })} />
           </div>
           <div>
-            <label className={`block text-xs mb-1 ${textMuted}`}>Party Time (display)</label>
+            <label className={`block text-xs mb-1 ${textMuted}`}>Table's Ready (display)</label>
             <input className={`${inputClass} w-full`} value={settings.partyTimeDisplay} onChange={(e) => setSettings({ ...settings, partyTimeDisplay: e.target.value })} />
+          </div>
+          <div>
+            <label className={`block text-xs mb-1 ${textMuted}`}>Dedication Time (display)</label>
+            <input className={`${inputClass} w-full`} value={settings.dedicationTimeDisplay} onChange={(e) => setSettings({ ...settings, dedicationTimeDisplay: e.target.value })} />
+          </div>
+          <div>
+            <label className={`block text-xs mb-1 ${textMuted}`}>Birthday Snack Location</label>
+            <input className={`${inputClass} w-full`} value={settings.birthdaySnackLocation} onChange={(e) => setSettings({ ...settings, birthdaySnackLocation: e.target.value })} />
           </div>
           <div>
             <label className={`block text-xs mb-1 ${textMuted}`}>Location (display)</label>
             <input className={`${inputClass} w-full`} value={settings.locationDisplay} onChange={(e) => setSettings({ ...settings, locationDisplay: e.target.value })} />
+          </div>
+        </fieldset>
+
+        {/* Editable Labels */}
+        <fieldset className="grid md:grid-cols-2 gap-4">
+          <legend className={`text-sm ${textMuted}`}>Editable Labels</legend>
+          <div>
+            <label className={`block text-xs mb-1 ${textMuted}`}>Dedication Time Label</label>
+            <input className={`${inputClass} w-full`} value={settings.dedicationTimeLabel} onChange={(e) => setSettings({ ...settings, dedicationTimeLabel: e.target.value })} />
+          </div>
+          <div>
+            <label className={`block text-xs mb-1 ${textMuted}`}>Table's Ready Label</label>
+            <input className={`${inputClass} w-full`} value={settings.tableReadyLabel} onChange={(e) => setSettings({ ...settings, tableReadyLabel: e.target.value })} />
+          </div>
+          <div>
+            <label className={`block text-xs mb-1 ${textMuted}`}>Birthday Snack Location Label</label>
+            <input className={`${inputClass} w-full`} value={settings.birthdaySnackLocationLabel} onChange={(e) => setSettings({ ...settings, birthdaySnackLocationLabel: e.target.value })} />
+          </div>
+          <div>
+            <label className={`block text-xs mb-1 ${textMuted}`}>Location Label</label>
+            <input className={`${inputClass} w-full`} value={settings.locationLabel} onChange={(e) => setSettings({ ...settings, locationLabel: e.target.value })} />
           </div>
         </fieldset>
 

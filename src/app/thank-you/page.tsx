@@ -23,10 +23,16 @@ export default async function ThankYouPage({ searchParams }: { searchParams?: Pr
   const confirmed = status === 'Confirmed';
 
   // Load settings for display text
-  let settings: { partyDateDisplay: string; partyTimeDisplay: string; locationDisplay: string; giftNote: string } = {
+  let settings: { partyDateDisplay: string; partyTimeDisplay: string; dedicationTimeDisplay: string; birthdaySnackLocation: string; locationDisplay: string; dedicationTimeLabel: string; tableReadyLabel: string; birthdaySnackLocationLabel: string; locationLabel: string; giftNote: string } = {
     partyDateDisplay: 'Oct 11, 2025',
     partyTimeDisplay: '3:00 PM',
+    dedicationTimeDisplay: '2:00 PM',
+    birthdaySnackLocation: 'Main Hall',
     locationDisplay: 'TBA',
+    dedicationTimeLabel: 'Dedication Time',
+    tableReadyLabel: 'Table\'s Ready',
+    birthdaySnackLocationLabel: 'Birthday Snack Location',
+    locationLabel: 'Location',
     giftNote:
       'Your presence is the most precious gift we could ask for. If you wish to bless Lauan further, we would deeply appreciate monetary gifts for his future needs or gift checks from department stores. 💙',
   };
@@ -86,8 +92,10 @@ export default async function ThankYouPage({ searchParams }: { searchParams?: Pr
 
             <div className="party-details">
               <div className="detail-item"><strong><span className="material-symbols-outlined">event</span> Date</strong><p>{settings.partyDateDisplay}</p></div>
-              <div className="detail-item"><strong><span className="material-symbols-outlined">schedule</span> Time</strong><p>{settings.partyTimeDisplay}</p></div>
-              <div className="detail-item"><strong><span className="material-symbols-outlined">location_on</span> Location</strong><p>{settings.locationDisplay}</p></div>
+              <div className="detail-item"><strong><span className="material-symbols-outlined">schedule</span> {settings.dedicationTimeLabel}</strong><p>{settings.dedicationTimeDisplay}</p></div>
+              <div className="detail-item"><strong><span className="material-symbols-outlined">schedule</span> {settings.tableReadyLabel}</strong><p>{settings.partyTimeDisplay}</p></div>
+              <div className="detail-item"><strong><span className="material-symbols-outlined">location_on</span> {settings.birthdaySnackLocationLabel}</strong><p>{settings.birthdaySnackLocation}</p></div>
+              <div className="detail-item"><strong><span className="material-symbols-outlined">location_on</span> {settings.locationLabel}</strong><p>{settings.locationDisplay}</p></div>
             </div>
 
             <div className="gift-note">
@@ -102,8 +110,10 @@ export default async function ThankYouPage({ searchParams }: { searchParams?: Pr
             <p>Your response has been recorded.</p>
             <div className="party-details">
               <div className="detail-item"><strong><span className="material-symbols-outlined">event</span> Date</strong><p>{settings.partyDateDisplay}</p></div>
-              <div className="detail-item"><strong><span className="material-symbols-outlined">schedule</span> Time</strong><p>{settings.partyTimeDisplay}</p></div>
-              <div className="detail-item"><strong><span className="material-symbols-outlined">location_on</span> Location</strong><p>{settings.locationDisplay}</p></div>
+              <div className="detail-item"><strong><span className="material-symbols-outlined">schedule</span> {settings.dedicationTimeLabel}</strong><p>{settings.dedicationTimeDisplay}</p></div>
+              <div className="detail-item"><strong><span className="material-symbols-outlined">schedule</span> {settings.tableReadyLabel}</strong><p>{settings.partyTimeDisplay}</p></div>
+              <div className="detail-item"><strong><span className="material-symbols-outlined">location_on</span> {settings.birthdaySnackLocationLabel}</strong><p>{settings.birthdaySnackLocation}</p></div>
+              <div className="detail-item"><strong><span className="material-symbols-outlined">location_on</span> {settings.locationLabel}</strong><p>{settings.locationDisplay}</p></div>
             </div>
           </>
         )}

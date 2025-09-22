@@ -15,10 +15,16 @@ export default async function InvitePage({ params, searchParams }: { params: Pro
   // Fetch guest via API to avoid bundling googleapis in page
   let guest: Guest | null = null;
   // Load settings for display text
-  let settings: { partyDateDisplay: string; partyTimeDisplay: string; locationDisplay: string; giftNote: string; countdownISO: string; venueAddress?: string; venueMapUrl?: string; dressCode?: string; hostNames?: string } = {
+  let settings: { partyDateDisplay: string; partyTimeDisplay: string; dedicationTimeDisplay: string; birthdaySnackLocation: string; locationDisplay: string; dedicationTimeLabel: string; tableReadyLabel: string; birthdaySnackLocationLabel: string; locationLabel: string; giftNote: string; countdownISO: string; venueAddress?: string; venueMapUrl?: string; dressCode?: string; hostNames?: string } = {
     partyDateDisplay: 'Oct 11, 2025',
     partyTimeDisplay: '3:00 PM',
+    dedicationTimeDisplay: '2:00 PM',
+    birthdaySnackLocation: 'Main Hall',
     locationDisplay: 'TBA',
+    dedicationTimeLabel: 'Dedication Time',
+    tableReadyLabel: 'Table\'s Ready',
+    birthdaySnackLocationLabel: 'Birthday Snack Location',
+    locationLabel: 'Location',
     giftNote: "Your presence is the most precious gift we could ask for. If you wish to bless Lauan further, we would deeply appreciate monetary gifts for his future needs or gift checks from department stores. 💙",
     countdownISO: '2025-10-11T15:00:00',
   };
@@ -52,22 +58,8 @@ export default async function InvitePage({ params, searchParams }: { params: Pro
             <p>You&apos;re invited to celebrate a very special milestone.</p>
           </div>
 
-          <div className="invite-hero">
-            <div className="hero-avatar" aria-label="Celebrant portrait loading preview">
-              <img src="/face.png" alt="Celebrant portrait" loading="eager" />
-              <svg className="hero-ring" viewBox="0 0 120 120" aria-hidden="true">
-                <circle cx="60" cy="60" r="56" pathLength="100"></circle>
-              </svg>
-            </div>
-          </div>
-
           <div className="card-body">
             <h2>Our little prince</h2>
-            <img
-              className="celebrant-name"
-              src="/celebrant-name.png"
-              alt="Celebrant name"
-            />
             <h2>is turning one!</h2>
           </div>
 
@@ -111,21 +103,54 @@ export default async function InvitePage({ params, searchParams }: { params: Pro
           )}
 
           <div className="party-details">
-            <div className="detail-item"><strong><span className="material-symbols-outlined">event</span> Date</strong><p>{settings.partyDateDisplay}</p></div>
-            <div className="detail-item"><strong><span className="material-symbols-outlined">schedule</span> Time</strong><p>{settings.partyTimeDisplay}</p></div>
-            <div className="detail-item"><strong><span className="material-symbols-outlined">location_on</span> Location</strong><p>{settings.locationDisplay}</p></div>
-            {settings.venueAddress ? (
-              <div className="detail-item"><strong><span className="material-symbols-outlined">map</span> Address</strong><p>{settings.venueAddress}</p></div>
-            ) : null}
-            {settings.venueMapUrl ? (
-              <div className="detail-item"><strong><span className="material-symbols-outlined">map</span> Map</strong><p><a className="underline" href={settings.venueMapUrl} target="_blank" rel="noreferrer">Open map</a></p></div>
-            ) : null}
-            {settings.dressCode ? (
-              <div className="detail-item"><strong><span className="material-symbols-outlined">checkroom</span> Dress code</strong><p>{settings.dressCode}</p></div>
-            ) : null}
-            {settings.hostNames ? (
-              <div className="detail-item"><strong><span className="material-symbols-outlined">family_restroom</span> Hosts</strong><p>{settings.hostNames}</p></div>
-            ) : null}
+            <table className="w-full border-collapse">
+              <tbody>
+                <tr className="border-b border-gray-200">
+                  <td className="py-2 pr-4 font-medium"><span className="material-symbols-outlined">event</span> Date</td>
+                  <td className="py-2">{settings.partyDateDisplay}</td>
+                </tr>
+                <tr className="border-b border-gray-200">
+                  <td className="py-2 pr-4 font-medium"><span className="material-symbols-outlined">schedule</span> {settings.dedicationTimeLabel}</td>
+                  <td className="py-2">{settings.dedicationTimeDisplay}</td>
+                </tr>
+                <tr className="border-b border-gray-200">
+                  <td className="py-2 pr-4 font-medium"><span className="material-symbols-outlined">schedule</span> {settings.tableReadyLabel}</td>
+                  <td className="py-2">{settings.partyTimeDisplay}</td>
+                </tr>
+                <tr className="border-b border-gray-200">
+                  <td className="py-2 pr-4 font-medium"><span className="material-symbols-outlined">location_on</span> {settings.birthdaySnackLocationLabel}</td>
+                  <td className="py-2">{settings.birthdaySnackLocation}</td>
+                </tr>
+                <tr className="border-b border-gray-200">
+                  <td className="py-2 pr-4 font-medium"><span className="material-symbols-outlined">location_on</span> {settings.locationLabel}</td>
+                  <td className="py-2">{settings.locationDisplay}</td>
+                </tr>
+                {settings.venueAddress ? (
+                  <tr className="border-b border-gray-200">
+                    <td className="py-2 pr-4 font-medium"><span className="material-symbols-outlined">map</span> Address</td>
+                    <td className="py-2">{settings.venueAddress}</td>
+                  </tr>
+                ) : null}
+                {settings.venueMapUrl ? (
+                  <tr className="border-b border-gray-200">
+                    <td className="py-2 pr-4 font-medium"><span className="material-symbols-outlined">map</span> Map</td>
+                    <td className="py-2"><a className="underline" href={settings.venueMapUrl} target="_blank" rel="noreferrer">Open map</a></td>
+                  </tr>
+                ) : null}
+                {settings.dressCode ? (
+                  <tr className="border-b border-gray-200">
+                    <td className="py-2 pr-4 font-medium"><span className="material-symbols-outlined">checkroom</span> Dress code</td>
+                    <td className="py-2">{settings.dressCode}</td>
+                  </tr>
+                ) : null}
+                {settings.hostNames ? (
+                  <tr className="border-b border-gray-200">
+                    <td className="py-2 pr-4 font-medium"><span className="material-symbols-outlined">family_restroom</span> Hosts</td>
+                    <td className="py-2">{settings.hostNames}</td>
+                  </tr>
+                ) : null}
+              </tbody>
+            </table>
           </div>
 
           <div id="countdown">

@@ -4,7 +4,14 @@ import { useEffect, useState } from 'react';
 type Settings = {
   partyDateDisplay: string;
   partyTimeDisplay: string;
+  dedicationTimeDisplay: string;
+  birthdaySnackLocation: string;
   locationDisplay: string;
+  // Editable labels
+  dedicationTimeLabel: string;
+  tableReadyLabel: string;
+  birthdaySnackLocationLabel: string;
+  locationLabel: string;
   giftNote: string;
   countdownISO: string;
   eventTitle?: string;
@@ -63,12 +70,36 @@ export default function InlineSettingsEditor({ initialSettings }: { initialSetti
             <input className="invite-input" value={settings.partyDateDisplay} onChange={(e) => setSettings({ ...settings, partyDateDisplay: e.target.value })} />
           </div>
           <div>
-            <label className="microcopy">Party Time (display)</label>
+            <label className="microcopy">Table's Ready (display)</label>
             <input className="invite-input" value={settings.partyTimeDisplay} onChange={(e) => setSettings({ ...settings, partyTimeDisplay: e.target.value })} />
+          </div>
+          <div>
+            <label className="microcopy">Dedication Time (display)</label>
+            <input className="invite-input" value={settings.dedicationTimeDisplay} onChange={(e) => setSettings({ ...settings, dedicationTimeDisplay: e.target.value })} />
+          </div>
+          <div>
+            <label className="microcopy">Birthday Snack Location</label>
+            <input className="invite-input" value={settings.birthdaySnackLocation} onChange={(e) => setSettings({ ...settings, birthdaySnackLocation: e.target.value })} />
           </div>
           <div>
             <label className="microcopy">Location (display)</label>
             <input className="invite-input" value={settings.locationDisplay} onChange={(e) => setSettings({ ...settings, locationDisplay: e.target.value })} />
+          </div>
+          <div>
+            <label className="microcopy">Dedication Time Label</label>
+            <input className="invite-input" value={settings.dedicationTimeLabel} onChange={(e) => setSettings({ ...settings, dedicationTimeLabel: e.target.value })} />
+          </div>
+          <div>
+            <label className="microcopy">Table's Ready Label</label>
+            <input className="invite-input" value={settings.tableReadyLabel} onChange={(e) => setSettings({ ...settings, tableReadyLabel: e.target.value })} />
+          </div>
+          <div>
+            <label className="microcopy">Birthday Snack Location Label</label>
+            <input className="invite-input" value={settings.birthdaySnackLocationLabel} onChange={(e) => setSettings({ ...settings, birthdaySnackLocationLabel: e.target.value })} />
+          </div>
+          <div>
+            <label className="microcopy">Location Label</label>
+            <input className="invite-input" value={settings.locationLabel} onChange={(e) => setSettings({ ...settings, locationLabel: e.target.value })} />
           </div>
           <div className="md:col-span-3">
             <label className="microcopy">Gift Note</label>

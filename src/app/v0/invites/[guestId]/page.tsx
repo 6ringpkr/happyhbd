@@ -56,11 +56,37 @@ export default async function InviteV0Page({ params }: { params: Promise<{ guest
             <CardDescription>Save the date and venue</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Info label="Date" value={settings?.partyDateDisplay || 'TBA'} />
-              <Info label="Time" value={settings?.partyTimeDisplay || 'TBA'} />
-              <Info label="Location" value={settings?.locationDisplay || 'TBA'} />
-              {settings?.venueAddress ? <Info label="Address" value={settings.venueAddress} /> : null}
+            <div className="space-y-0">
+              <table className="w-full border-collapse">
+                <tbody>
+                  <tr className="border-b border-gray-200">
+                    <td className="py-2 pr-4 font-medium">Date</td>
+                    <td className="py-2">{settings?.partyDateDisplay || 'TBA'}</td>
+                  </tr>
+                  <tr className="border-b border-gray-200">
+                    <td className="py-2 pr-4 font-medium">{settings?.dedicationTimeLabel || 'Dedication Time'}</td>
+                    <td className="py-2">{settings?.dedicationTimeDisplay || 'TBA'}</td>
+                  </tr>
+                  <tr className="border-b border-gray-200">
+                    <td className="py-2 pr-4 font-medium">{settings?.tableReadyLabel || 'Table\'s Ready'}</td>
+                    <td className="py-2">{settings?.partyTimeDisplay || 'TBA'}</td>
+                  </tr>
+                  <tr className="border-b border-gray-200">
+                    <td className="py-2 pr-4 font-medium">{settings?.birthdaySnackLocationLabel || 'Birthday Snack Location'}</td>
+                    <td className="py-2">{settings?.birthdaySnackLocation || 'TBA'}</td>
+                  </tr>
+                  <tr className="border-b border-gray-200">
+                    <td className="py-2 pr-4 font-medium">{settings?.locationLabel || 'Location'}</td>
+                    <td className="py-2">{settings?.locationDisplay || 'TBA'}</td>
+                  </tr>
+                  {settings?.venueAddress ? (
+                    <tr className="border-b border-gray-200">
+                      <td className="py-2 pr-4 font-medium">Address</td>
+                      <td className="py-2">{settings.venueAddress}</td>
+                    </tr>
+                  ) : null}
+                </tbody>
+              </table>
             </div>
             <div>
               <h3 className="text-sm font-medium">Countdown to the party</h3>
