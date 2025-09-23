@@ -23,7 +23,8 @@ export async function POST(request: NextRequest) {
     body = Object.fromEntries(Array.from(fd.entries()).map(([k, v]) => [k, typeof v === 'string' ? v : ''])) as Record<string, unknown>;
   }
   const allowedKeys = [
-    'partyDateDisplay','partyTimeDisplay','locationDisplay','giftNote','countdownISO',
+    'partyDateDisplay','partyTimeDisplay','dedicationTimeDisplay','birthdaySnackLocation','locationDisplay','giftNote','countdownISO',
+    'dedicationTimeLabel','tableReadyLabel','birthdaySnackLocationLabel','locationLabel','dateLabel','addressLabel','mapLabel','dressCodeLabel','hostsLabel',
     'eventTitle','celebrantName','celebrantImageUrl','venueAddress','venueMapUrl','dressCode','registryNote','rsvpDeadlineISO','hostNames','themeName','backgroundImageUrl','accentColor','invitationTemplate'
   ] as const;
   const update: Record<string, string> = {};

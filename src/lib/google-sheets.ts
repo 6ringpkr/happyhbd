@@ -285,6 +285,12 @@ export interface Settings {
   tableReadyLabel: string; // e.g., "Table's Ready"
   birthdaySnackLocationLabel: string; // e.g., "Birthday Snack Location"
   locationLabel: string; // e.g., "Location"
+  // Additional detail labels
+  dateLabel: string; // e.g., "Date"
+  addressLabel: string; // e.g., "Address"
+  mapLabel: string; // e.g., "Map"
+  dressCodeLabel: string; // e.g., "Dress code"
+  hostsLabel: string; // e.g., "Hosts"
   giftNote: string;         // long paragraph shown under gift note
   countdownISO: string;     // ISO datetime for countdown timer
   // Extended fields for future template customization
@@ -314,6 +320,12 @@ export const DEFAULT_SETTINGS: Settings = {
   tableReadyLabel: 'Table\'s Ready',
   birthdaySnackLocationLabel: 'Birthday Snack Location',
   locationLabel: 'Location',
+  // Additional detail labels
+  dateLabel: 'Date',
+  addressLabel: 'Address',
+  mapLabel: 'Map',
+  dressCodeLabel: 'Dress code',
+  hostsLabel: 'Hosts',
   giftNote:
     "Your presence is the most precious gift we could ask for. If you wish to bless Lauan further, we would deeply appreciate monetary gifts for his future needs or gift checks from department stores. 💙",
   countdownISO: '2025-10-11T15:00:00',
@@ -360,6 +372,12 @@ export async function getSettings(): Promise<Settings> {
       tableReadyLabel: kv.tableReadyLabel ?? DEFAULT_SETTINGS.tableReadyLabel,
       birthdaySnackLocationLabel: kv.birthdaySnackLocationLabel ?? DEFAULT_SETTINGS.birthdaySnackLocationLabel,
       locationLabel: kv.locationLabel ?? DEFAULT_SETTINGS.locationLabel,
+      // Additional detail labels
+      dateLabel: kv.dateLabel ?? DEFAULT_SETTINGS.dateLabel,
+      addressLabel: kv.addressLabel ?? DEFAULT_SETTINGS.addressLabel,
+      mapLabel: kv.mapLabel ?? DEFAULT_SETTINGS.mapLabel,
+      dressCodeLabel: kv.dressCodeLabel ?? DEFAULT_SETTINGS.dressCodeLabel,
+      hostsLabel: kv.hostsLabel ?? DEFAULT_SETTINGS.hostsLabel,
       giftNote: kv.giftNote ?? DEFAULT_SETTINGS.giftNote,
       countdownISO: kv.countdownISO ?? DEFAULT_SETTINGS.countdownISO,
       eventTitle: kv.eventTitle ?? DEFAULT_SETTINGS.eventTitle,

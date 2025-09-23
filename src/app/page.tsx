@@ -4,6 +4,7 @@ import useSWR from 'swr';
 import { Header } from './admin/components/Header';
 import { Stats } from './admin/components/Stats';
 import { InvitationsPanel } from './admin/components/InvitationsPanel';
+import { SettingsPanel } from './admin/components/SettingsPanel';
 import { GuestsTable } from './admin/components/GuestsTable';
 
 type Guest = {
@@ -154,23 +155,38 @@ export default function Home() {
     setGenInviteUrl('');
     setGenQrUrl('');
     setIsGenerating(true);
-    const fd = new FormData();
-    fd.set('name', name);
-    if (isGodparent) fd.set('isGodparent', 'on');
-    const res = await fetch('/api/generate-invite', { method: 'POST', body: fd, headers: { Accept: 'application/json' } });
-    const json = await res.json().catch(() => null);
-    if (res.ok) {
-      const full = `${location.origin}${json.inviteUrl}`;
-      setResult(`Created: ${full}`);
-      setGenInviteUrl(full);
-      setGenQrUrl(`/api/qr?url=${encodeURIComponent(json.inviteUrl)}&size=200`);
-      setName('');
-      setIsGodparent(false);
-      refresh();
-    } else {
-      setResult(json?.error || 'Failed to generate invite');
+    
+    try {
+      const fd = new FormData();
+      fd.set('name', name);
+      if (isGodparent) fd.set('isGodparent', 'on');
+      
+      const res = await fetch('/api/generate-invite', { 
+        method: 'POST', 
+        body: fd, 
+        headers: { Accept: 'application/json' } 
+      });
+      
+      const json = await res.json().catch(() => null);
+      
+      if (res.ok && json && json.inviteUrl) {
+        const full = `${location.origin}${json.inviteUrl}`;
+        setResult(`Created: ${full}`);
+        setGenInviteUrl(full);
+        setGenQrUrl(`/api/qr?url=${encodeURIComponent(json.inviteUrl)}&size=200`);
+        setName('');
+        setIsGodparent(false);
+        refresh();
+      } else {
+        console.error('Generate invite failed:', { res: res.status, json });
+        setResult(json?.error || `Failed to generate invite (${res.status})`);
+      }
+    } catch (error) {
+      console.error('Generate invite error:', error);
+      setResult('Network error - please try again');
+    } finally {
+      setIsGenerating(false);
     }
-    setIsGenerating(false);
   }
 
   async function onBulkProcess() {
@@ -322,7 +338,13 @@ export default function Home() {
           roundedSection={roundedSection}
         />
 
-        {/* Settings removed intentionally */}
+        <SettingsPanel
+          sectionCard={sectionCard}
+          inputClass={inputClass}
+          textMuted={textMuted}
+          btnPrimary={btnPrimary}
+          roundedSection={roundedSection}
+        />
 
         <GuestsTable
           loading={loading}

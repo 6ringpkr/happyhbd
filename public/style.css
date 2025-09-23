@@ -31,13 +31,61 @@
     backdrop-filter: blur(8px);
     border-radius: 22px;
     box-shadow: 0 20px 40px rgba(24, 56, 113, 0.12), 0 2px 8px rgba(24, 56, 113, 0.05);
-    max-width: 720px;
+    max-width: 1000px;
     width: 100%;
     text-align: center;
-    padding: 44px 30px;
+    padding: 0;
     border: 1px solid #d6eaff;
     position: relative;
     overflow: hidden;
+}
+
+/* Horizontal Cover Image */
+.cover-section {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    border-radius: 22px 22px 0 0;
+    position: relative;
+}
+
+.cover-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+}
+
+/* Content Grid Layout */
+.content-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding: 30px;
+}
+
+.content-main {
+    text-align: left;
+}
+
+.content-main .card-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.content-main .card-body {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.content-sidebar {
+    text-align: center;
+    margin-top: 20px;
+    background: linear-gradient(180deg, #f8fbff 0%, #f0f7ff 100%);
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid #e6f3ff;
 }
 
 /* Hero avatar at top of card */
@@ -149,30 +197,76 @@
 }
 
 .party-details {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 12px;
     margin: 30px 0;
     padding: 20px 0;
     border-top: 1px dashed #d6eaff;
     border-bottom: 1px dashed #d6eaff;
 }
 
+.details-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+}
+
 .detail-item {
-    flex: 1;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 12px;
+    border: 1px solid #e6f3ff;
+    transition: all 0.2s ease;
 }
 
-.detail-item strong {
-    display: inline-flex;
+.detail-item:hover {
+    background: rgba(255, 255, 255, 0.8);
+    border-color: #d6eaff;
+    transform: translateY(-1px);
+}
+
+.detail-icon {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 1.05em;
-    color: #0f4b8b;
+    justify-content: center;
+    background: linear-gradient(135deg, #1c82ff 0%, #0f62fe 100%);
+    border-radius: 10px;
+    color: white;
+    font-size: 18px;
 }
 
-.detail-item p {
-    margin: 5px 0 0 0;
+.detail-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.detail-label {
+    font-size: 0.9em;
+    font-weight: 600;
+    color: #0f4b8b;
+    margin-bottom: 4px;
+    line-height: 1.2;
+}
+
+.detail-value {
     font-size: 1em;
+    color: #334155;
+    line-height: 1.4;
+    word-wrap: break-word;
+}
+
+.detail-link {
+    color: #1c82ff;
+    text-decoration: underline;
+    font-weight: 500;
+}
+
+.detail-link:hover {
+    color: #0f62fe;
 }
 
 #countdown {
@@ -188,6 +282,68 @@
     margin-bottom: 15px;
 }
 
+/* New Countdown Design - Based on sample */
+.countdown-grid-new {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: max-content;
+    gap: 20px;
+    text-align: center;
+}
+
+.countdown-box-new {
+    background: linear-gradient(135deg, #1c82ff 0%, #0f62fe 100%);
+    color: white;
+    border-radius: 16px;
+    padding: 16px 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 20px rgba(15, 98, 254, 0.3);
+    min-width: 80px;
+    transition: all 0.2s ease;
+}
+
+.countdown-box-new:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(15, 98, 254, 0.4);
+}
+
+.countdown-number-new {
+    font-family: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 3rem;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+/* DaisyUI-like countdown rendering using CSS counter */
+.countdown-number-new::after {
+    content: counter(value);
+    counter-reset: value var(--value);
+}
+
+.countdown-label-new {
+    font-size: 0.9rem;
+    font-weight: 500;
+    opacity: 0.9;
+    text-transform: lowercase;
+    letter-spacing: 0.5px;
+}
+
+/* Tick animation on value change */
+@keyframes tickBounce {
+    0% { transform: translateY(0); }
+    35% { transform: translateY(-6px); }
+    100% { transform: translateY(0); }
+}
+
+.countdown-box-new.tick {
+    animation: tickBounce 300ms ease-in-out;
+}
+
+/* Legacy countdown styles for backward compatibility */
 .countdown-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -215,7 +371,6 @@
     line-height: 1;
 }
 
-/* DaisyUI-like countdown rendering using CSS counter */
 .countdown-box .countdown-number::after {
     content: counter(value);
     counter-reset: value var(--value);
@@ -229,19 +384,38 @@
     text-transform: uppercase;
 }
 
-/* Tick animation on value change */
-@keyframes tickBounce {
-    0% { transform: translateY(0); }
-    35% { transform: translateY(-6px); }
-    100% { transform: translateY(0); }
-}
-
-.countdown-box.tick {
-    animation: tickBounce 300ms ease-in-out;
+@media (max-width: 640px) {
+    .countdown-grid-new { 
+        grid-auto-flow: row;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+    
+    .countdown-number-new {
+        font-size: 2.5rem;
+    }
+    
+    .countdown-box-new {
+        min-width: 70px;
+        padding: 12px 8px;
+    }
 }
 
 @media (max-width: 420px) {
     .countdown-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    
+    .countdown-number-new {
+        font-size: 2rem;
+    }
+    
+    .countdown-box-new {
+        min-width: 60px;
+        padding: 10px 6px;
+    }
+    
+    .countdown-label-new {
+        font-size: 0.8rem;
+    }
 }
 
 .rsvp-form {
@@ -322,13 +496,77 @@
     border: 1px solid #d6eaff;
 }
 
+/* Tablet Layout - Two Column Details */
 @media (min-width: 640px) {
-    .party-details { grid-template-columns: repeat(3, 1fr); }
+    .details-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
 }
 
+/* Desktop Layout - Two Column */
+@media (min-width: 768px) {
+    .content-grid {
+        grid-template-columns: 2fr 1fr;
+        gap: 40px;
+        padding: 40px;
+    }
+    
+    .content-sidebar {
+        margin-top: 0;
+        text-align: center;
+        background: transparent;
+        border: none;
+        padding: 0;
+    }
+    
+    .cover-section {
+        height: 250px;
+    }
+    
+    .details-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+    }
+}
+
+/* Large Desktop - Three Column Details */
+@media (min-width: 1024px) {
+    .details-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+}
+
+
 @media (max-width: 600px) {
-    .card { padding: 24px; border-radius: 16px; }
+    .content-grid { 
+        padding: 20px; 
+    }
+    .cover-section {
+        height: 160px;
+        border-radius: 16px 16px 0 0;
+    }
     .rsvp-form form { flex-direction: column; }
+    
+    .detail-item {
+        padding: 10px;
+        gap: 10px;
+    }
+    
+    .detail-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+    }
+    
+    .detail-label {
+        font-size: 0.85em;
+    }
+    
+    .detail-value {
+        font-size: 0.95em;
+    }
 }
 
 .microcopy {

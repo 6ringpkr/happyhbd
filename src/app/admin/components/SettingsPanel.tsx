@@ -12,6 +12,12 @@ interface Settings {
   tableReadyLabel: string;
   birthdaySnackLocationLabel: string;
   locationLabel: string;
+  // Additional detail labels
+  dateLabel: string;
+  addressLabel: string;
+  mapLabel: string;
+  dressCodeLabel: string;
+  hostsLabel: string;
   giftNote: string;
   countdownISO: string;
   eventTitle: string;
@@ -148,7 +154,11 @@ export function SettingsPanel({ sectionCard, inputClass, textMuted, btnPrimary, 
 
         {/* Editable Labels */}
         <fieldset className="grid md:grid-cols-2 gap-4">
-          <legend className={`text-sm ${textMuted}`}>Editable Labels</legend>
+          <legend className={`text-sm ${textMuted}`}>Event Detail Labels</legend>
+          <div>
+            <label className={`block text-xs mb-1 ${textMuted}`}>Date Label</label>
+            <input className={`${inputClass} w-full`} value={settings.dateLabel} onChange={(e) => setSettings({ ...settings, dateLabel: e.target.value })} />
+          </div>
           <div>
             <label className={`block text-xs mb-1 ${textMuted}`}>Dedication Time Label</label>
             <input className={`${inputClass} w-full`} value={settings.dedicationTimeLabel} onChange={(e) => setSettings({ ...settings, dedicationTimeLabel: e.target.value })} />
@@ -164,6 +174,22 @@ export function SettingsPanel({ sectionCard, inputClass, textMuted, btnPrimary, 
           <div>
             <label className={`block text-xs mb-1 ${textMuted}`}>Location Label</label>
             <input className={`${inputClass} w-full`} value={settings.locationLabel} onChange={(e) => setSettings({ ...settings, locationLabel: e.target.value })} />
+          </div>
+          <div>
+            <label className={`block text-xs mb-1 ${textMuted}`}>Address Label</label>
+            <input className={`${inputClass} w-full`} value={settings.addressLabel} onChange={(e) => setSettings({ ...settings, addressLabel: e.target.value })} />
+          </div>
+          <div>
+            <label className={`block text-xs mb-1 ${textMuted}`}>Map Label</label>
+            <input className={`${inputClass} w-full`} value={settings.mapLabel} onChange={(e) => setSettings({ ...settings, mapLabel: e.target.value })} />
+          </div>
+          <div>
+            <label className={`block text-xs mb-1 ${textMuted}`}>Dress Code Label</label>
+            <input className={`${inputClass} w-full`} value={settings.dressCodeLabel} onChange={(e) => setSettings({ ...settings, dressCodeLabel: e.target.value })} />
+          </div>
+          <div>
+            <label className={`block text-xs mb-1 ${textMuted}`}>Hosts Label</label>
+            <input className={`${inputClass} w-full`} value={settings.hostsLabel} onChange={(e) => setSettings({ ...settings, hostsLabel: e.target.value })} />
           </div>
         </fieldset>
 
