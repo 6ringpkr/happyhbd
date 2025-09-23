@@ -2,15 +2,11 @@
 import { useEffect, useState } from 'react';
 
 interface Settings {
-  partyDateDisplay: string;
-  partyTimeDisplay: string;
+  dedicationDateDisplay: string;
   dedicationTimeDisplay: string;
-  birthdaySnackLocation: string;
   locationDisplay: string;
   // Editable labels
   dedicationTimeLabel: string;
-  tableReadyLabel: string;
-  birthdaySnackLocationLabel: string;
   locationLabel: string;
   // Additional detail labels
   dateLabel: string;
@@ -19,7 +15,6 @@ interface Settings {
   dressCodeLabel: string;
   hostsLabel: string;
   giftNote: string;
-  countdownISO: string;
   eventTitle: string;
   celebrantName: string;
   celebrantImageUrl: string;
@@ -47,6 +42,8 @@ export function SettingsPanel({ sectionCard, inputClass, textMuted, btnPrimary, 
   const [settings, setSettings] = useState<Settings | null>(null);
   const [saving, setSaving] = useState(false);
   const [hint, setHint] = useState('');
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -54,7 +51,10 @@ export function SettingsPanel({ sectionCard, inputClass, textMuted, btnPrimary, 
         const res = await fetch('/api/settings', { headers: { Accept: 'application/json' } });
         const json = await res.json();
         if (json?.settings) setSettings(json.settings);
-      } catch {}
+        setIsAuthenticated(true);
+      } catch {
+        setIsAuthenticated(false);
+      }
     })();
   }, []);
 
@@ -63,25 +63,33 @@ export function SettingsPanel({ sectionCard, inputClass, textMuted, btnPrimary, 
     if (!settings) return;
     setSaving(true);
     setHint('');
+    
     try {
       const res = await fetch('/api/settings', {
         method: 'POST',
         headers: { 'content-type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify(settings),
+        credentials: 'include', // Include cookies for authentication
       });
       const json = await res.json().catch(() => null);
       if (res.ok) {
         setSettings(json.settings);
         setHint('Saved.');
       } else {
-        setHint(json?.error || 'Failed to save settings');
+        if (res.status === 401) {
+          setHint('Unauthorized - Please log in as admin first');
+        } else {
+          setHint(json?.error || 'Failed to save settings');
+        }
       }
+    } catch (error) {
+      setHint('Network error - please try again');
     } finally {
       setSaving(false);
     }
   }
 
-  if (!settings) {
+  if (!settings || isAuthenticated === null) {
     return (
       <section className={`${sectionCard} border ${roundedSection} p-4 space-y-4`}>
         <h2 className="text-lg font-medium">Settings</h2>
@@ -90,10 +98,34 @@ export function SettingsPanel({ sectionCard, inputClass, textMuted, btnPrimary, 
     );
   }
 
+  if (isAuthenticated === false) {
+    return (
+      <section className={`${sectionCard} border ${roundedSection} p-4 space-y-4`}>
+        <h2 className="text-lg font-medium">Settings</h2>
+        <div className={`${textMuted} p-4 bg-yellow-50 border border-yellow-200 rounded-lg`}>
+          <p className="font-medium text-yellow-800">Admin Login Required</p>
+          <p className="text-sm text-yellow-700 mt-1">
+            You need to log in as admin to access settings. Please use the admin login form above.
+          </p>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className={`${sectionCard} border ${roundedSection} p-4 space-y-4`}>
-      <h2 className="text-lg font-medium">Settings</h2>
-      <form onSubmit={onSave} className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-medium">Settings</h2>
+        <button
+          type="button"
+          onClick={() => setIsExpanded(!isExpanded)}
+          className={`${btnPrimary} px-3 py-1 text-sm`}
+        >
+          {isExpanded ? 'Hide' : 'Show'} Settings
+        </button>
+      </div>
+      {isExpanded && (
+        <form onSubmit={onSave} className="space-y-6">
         {/* Template & Theme */}
         <fieldset className="grid md:grid-cols-3 gap-4">
           <legend className={`text-sm ${textMuted}`}>Template & Theme</legend>
@@ -120,7 +152,7 @@ export function SettingsPanel({ sectionCard, inputClass, textMuted, btnPrimary, 
           <legend className={`text-sm ${textMuted}`}>Event Basics</legend>
           <div>
             <label className={`block text-xs mb-1 ${textMuted}`}>Event Title</label>
-            <input className={`${inputClass} w-full`} value={settings.eventTitle} onChange={(e) => setSettings({ ...settings, eventTitle: e.target.value })} placeholder="First Birthday" />
+            <input className={`${inputClass} w-full`} value={settings.eventTitle} onChange={(e) => setSettings({ ...settings, eventTitle: e.target.value })} placeholder="Dedication Ceremony" />
           </div>
           <div>
             <label className={`block text-xs mb-1 ${textMuted}`}>Celebrant Name</label>
@@ -131,20 +163,12 @@ export function SettingsPanel({ sectionCard, inputClass, textMuted, btnPrimary, 
             <input className={`${inputClass} w-full`} value={settings.celebrantImageUrl} onChange={(e) => setSettings({ ...settings, celebrantImageUrl: e.target.value })} placeholder="/celebrant-name.png or https://..." />
           </div>
           <div>
-            <label className={`block text-xs mb-1 ${textMuted}`}>Party Date (display)</label>
-            <input className={`${inputClass} w-full`} value={settings.partyDateDisplay} onChange={(e) => setSettings({ ...settings, partyDateDisplay: e.target.value })} />
-          </div>
-          <div>
-            <label className={`block text-xs mb-1 ${textMuted}`}>Table's Ready (display)</label>
-            <input className={`${inputClass} w-full`} value={settings.partyTimeDisplay} onChange={(e) => setSettings({ ...settings, partyTimeDisplay: e.target.value })} />
+            <label className={`block text-xs mb-1 ${textMuted}`}>Dedication Date (display)</label>
+            <input className={`${inputClass} w-full`} value={settings.dedicationDateDisplay} onChange={(e) => setSettings({ ...settings, dedicationDateDisplay: e.target.value })} />
           </div>
           <div>
             <label className={`block text-xs mb-1 ${textMuted}`}>Dedication Time (display)</label>
             <input className={`${inputClass} w-full`} value={settings.dedicationTimeDisplay} onChange={(e) => setSettings({ ...settings, dedicationTimeDisplay: e.target.value })} />
-          </div>
-          <div>
-            <label className={`block text-xs mb-1 ${textMuted}`}>Birthday Snack Location</label>
-            <input className={`${inputClass} w-full`} value={settings.birthdaySnackLocation} onChange={(e) => setSettings({ ...settings, birthdaySnackLocation: e.target.value })} />
           </div>
           <div>
             <label className={`block text-xs mb-1 ${textMuted}`}>Location (display)</label>
@@ -162,14 +186,6 @@ export function SettingsPanel({ sectionCard, inputClass, textMuted, btnPrimary, 
           <div>
             <label className={`block text-xs mb-1 ${textMuted}`}>Dedication Time Label</label>
             <input className={`${inputClass} w-full`} value={settings.dedicationTimeLabel} onChange={(e) => setSettings({ ...settings, dedicationTimeLabel: e.target.value })} />
-          </div>
-          <div>
-            <label className={`block text-xs mb-1 ${textMuted}`}>Table's Ready Label</label>
-            <input className={`${inputClass} w-full`} value={settings.tableReadyLabel} onChange={(e) => setSettings({ ...settings, tableReadyLabel: e.target.value })} />
-          </div>
-          <div>
-            <label className={`block text-xs mb-1 ${textMuted}`}>Birthday Snack Location Label</label>
-            <input className={`${inputClass} w-full`} value={settings.birthdaySnackLocationLabel} onChange={(e) => setSettings({ ...settings, birthdaySnackLocationLabel: e.target.value })} />
           </div>
           <div>
             <label className={`block text-xs mb-1 ${textMuted}`}>Location Label</label>
@@ -209,10 +225,6 @@ export function SettingsPanel({ sectionCard, inputClass, textMuted, btnPrimary, 
             <input className={`${inputClass} w-full`} value={settings.dressCode} onChange={(e) => setSettings({ ...settings, dressCode: e.target.value })} />
           </div>
           <div>
-            <label className={`block text-xs mb-1 ${textMuted}`}>Countdown ISO DateTime</label>
-            <input className={`${inputClass} w-full`} value={settings.countdownISO} onChange={(e) => setSettings({ ...settings, countdownISO: e.target.value })} placeholder="2025-10-11T15:00:00" />
-          </div>
-          <div>
             <label className={`block text-xs mb-1 ${textMuted}`}>RSVP Deadline (ISO)</label>
             <input className={`${inputClass} w-full`} value={settings.rsvpDeadlineISO} onChange={(e) => setSettings({ ...settings, rsvpDeadlineISO: e.target.value })} placeholder="2025-09-20" />
           </div>
@@ -237,9 +249,14 @@ export function SettingsPanel({ sectionCard, inputClass, textMuted, btnPrimary, 
 
         <div className="md:col-span-2 flex items-center gap-3">
           <button type="submit" disabled={saving} className={btnPrimary}>{saving ? 'Saving…' : 'Save Settings'}</button>
-          {hint ? <span className={`${textMuted} text-sm`}>{hint}</span> : null}
+          {hint ? (
+            <span className={`text-sm ${hint.includes('Unauthorized') ? 'text-red-600' : textMuted}`}>
+              {hint}
+            </span>
+          ) : null}
         </div>
-      </form>
+        </form>
+      )}
     </section>
   );
 }

@@ -155,17 +155,30 @@ export async function updateRsvp(uniqueId: string, status: 'Confirmed' | 'Declin
     throw new Error("Guest not found");
   }
 
-  const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-
   const { sheets, spreadsheetId } = await getSheetsClient();
-  await sheets.spreadsheets.values.update({
-    spreadsheetId,
-    range: `${SHEET_NAME}!C${guest.row}:D${guest.row}`,
-    valueInputOption: "USER_ENTERED",
-    requestBody: {
-      values: [[status, today]],
-    },
-  });
+  
+  if (status === 'Confirmed') {
+    // Only save RsvpDate when user accepts (Confirmed)
+    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    await sheets.spreadsheets.values.update({
+      spreadsheetId,
+      range: `${SHEET_NAME}!C${guest.row}:D${guest.row}`,
+      valueInputOption: "USER_ENTERED",
+      requestBody: {
+        values: [[status, today]],
+      },
+    });
+  } else if (status === 'Declined') {
+    // For declined, only update status, don't save RsvpDate
+    await sheets.spreadsheets.values.update({
+      spreadsheetId,
+      range: `${SHEET_NAME}!C${guest.row}`,
+      valueInputOption: "USER_ENTERED",
+      requestBody: {
+        values: [[status]],
+      },
+    });
+  }
 }
 
 export async function acceptGodparentRole(uniqueId: string, fullName: string): Promise<void> {
@@ -275,15 +288,11 @@ export async function addGuestsBulk(items: Array<{ name: string; isGodparent: bo
 
 
 export interface Settings {
-  partyDateDisplay: string; // e.g., "Oct 11, 2025"
-  partyTimeDisplay: string; // e.g., "3:00 PM"
+  dedicationDateDisplay: string; // e.g., "Oct 11, 2025"
   dedicationTimeDisplay: string; // e.g., "2:00 PM"
-  birthdaySnackLocation: string; // e.g., "Main Hall"
   locationDisplay: string;  // e.g., "TBA"
   // Editable labels
   dedicationTimeLabel: string; // e.g., "Dedication Time"
-  tableReadyLabel: string; // e.g., "Table's Ready"
-  birthdaySnackLocationLabel: string; // e.g., "Birthday Snack Location"
   locationLabel: string; // e.g., "Location"
   // Additional detail labels
   dateLabel: string; // e.g., "Date"
@@ -292,9 +301,8 @@ export interface Settings {
   dressCodeLabel: string; // e.g., "Dress code"
   hostsLabel: string; // e.g., "Hosts"
   giftNote: string;         // long paragraph shown under gift note
-  countdownISO: string;     // ISO datetime for countdown timer
   // Extended fields for future template customization
-  eventTitle: string;       // e.g., "First Birthday"
+  eventTitle: string;       // e.g., "Dedication Ceremony"
   celebrantName: string;    // e.g., "Lauan"
   celebrantImageUrl: string; // optional hero/wordmark image for celebrant
   venueAddress: string;     // full address
@@ -310,15 +318,11 @@ export interface Settings {
 }
 
 export const DEFAULT_SETTINGS: Settings = {
-  partyDateDisplay: 'Oct 11, 2025',
-  partyTimeDisplay: '3:00 PM',
+  dedicationDateDisplay: 'Oct 11, 2025',
   dedicationTimeDisplay: '2:00 PM',
-  birthdaySnackLocation: 'Main Hall',
   locationDisplay: 'TBA',
   // Default labels
   dedicationTimeLabel: 'Dedication Time',
-  tableReadyLabel: 'Table\'s Ready',
-  birthdaySnackLocationLabel: 'Birthday Snack Location',
   locationLabel: 'Location',
   // Additional detail labels
   dateLabel: 'Date',
@@ -328,8 +332,7 @@ export const DEFAULT_SETTINGS: Settings = {
   hostsLabel: 'Hosts',
   giftNote:
     "Your presence is the most precious gift we could ask for. If you wish to bless Lauan further, we would deeply appreciate monetary gifts for his future needs or gift checks from department stores. 💙",
-  countdownISO: '2025-10-11T15:00:00',
-  eventTitle: '',
+  eventTitle: 'Dedication Ceremony',
   celebrantName: '',
   celebrantImageUrl: '',
   venueAddress: '',
@@ -362,15 +365,11 @@ export async function getSettings(): Promise<Settings> {
       kv[String(key).trim()] = (value ?? '').toString();
     }
     return {
-      partyDateDisplay: kv.partyDateDisplay ?? DEFAULT_SETTINGS.partyDateDisplay,
-      partyTimeDisplay: kv.partyTimeDisplay ?? DEFAULT_SETTINGS.partyTimeDisplay,
+      dedicationDateDisplay: kv.dedicationDateDisplay ?? DEFAULT_SETTINGS.dedicationDateDisplay,
       dedicationTimeDisplay: kv.dedicationTimeDisplay ?? DEFAULT_SETTINGS.dedicationTimeDisplay,
-      birthdaySnackLocation: kv.birthdaySnackLocation ?? DEFAULT_SETTINGS.birthdaySnackLocation,
       locationDisplay: kv.locationDisplay ?? DEFAULT_SETTINGS.locationDisplay,
       // Labels
       dedicationTimeLabel: kv.dedicationTimeLabel ?? DEFAULT_SETTINGS.dedicationTimeLabel,
-      tableReadyLabel: kv.tableReadyLabel ?? DEFAULT_SETTINGS.tableReadyLabel,
-      birthdaySnackLocationLabel: kv.birthdaySnackLocationLabel ?? DEFAULT_SETTINGS.birthdaySnackLocationLabel,
       locationLabel: kv.locationLabel ?? DEFAULT_SETTINGS.locationLabel,
       // Additional detail labels
       dateLabel: kv.dateLabel ?? DEFAULT_SETTINGS.dateLabel,
@@ -379,7 +378,6 @@ export async function getSettings(): Promise<Settings> {
       dressCodeLabel: kv.dressCodeLabel ?? DEFAULT_SETTINGS.dressCodeLabel,
       hostsLabel: kv.hostsLabel ?? DEFAULT_SETTINGS.hostsLabel,
       giftNote: kv.giftNote ?? DEFAULT_SETTINGS.giftNote,
-      countdownISO: kv.countdownISO ?? DEFAULT_SETTINGS.countdownISO,
       eventTitle: kv.eventTitle ?? DEFAULT_SETTINGS.eventTitle,
       celebrantName: kv.celebrantName ?? DEFAULT_SETTINGS.celebrantName,
       celebrantImageUrl: kv.celebrantImageUrl ?? DEFAULT_SETTINGS.celebrantImageUrl,

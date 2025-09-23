@@ -29,6 +29,7 @@ interface HeaderProps {
   borderCard: string;
   btnNeutral: string;
   inputClass: string;
+  onLogout?: () => void;
 }
 
 export function Header({
@@ -48,7 +49,8 @@ export function Header({
   textSecondary,
   borderCard,
   btnNeutral,
-  inputClass
+  inputClass,
+  onLogout
 }: HeaderProps) {
   const isDark = theme === 'dark';
   const switchBase = isDark ? 'bg-[#141a3a] border-[#293057]' : 'bg-white border-[#d0d5e2]';
@@ -146,7 +148,12 @@ export function Header({
             URL.revokeObjectURL(a.href);
           }}
         >Export CSV</Button>
-        <Link href="/" className={`px-3 py-2 rounded-lg border ${borderCard} bg-transparent ${textSecondary}`}>Logout</Link>
+        <button
+          onClick={onLogout}
+          className={`px-3 py-2 rounded-lg border ${borderCard} bg-transparent ${textSecondary} hover:bg-red-50 hover:text-red-600 hover:border-red-200`}
+        >
+          Logout
+        </button>
       </div>
     </header>
   );

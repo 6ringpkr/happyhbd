@@ -2,18 +2,13 @@
 import { useEffect, useState } from 'react';
 
 type Settings = {
-  partyDateDisplay: string;
-  partyTimeDisplay: string;
+  dedicationDateDisplay: string;
   dedicationTimeDisplay: string;
-  birthdaySnackLocation: string;
   locationDisplay: string;
   // Editable labels
   dedicationTimeLabel: string;
-  tableReadyLabel: string;
-  birthdaySnackLocationLabel: string;
   locationLabel: string;
   giftNote: string;
-  countdownISO: string;
   eventTitle?: string;
   celebrantName?: string;
   celebrantImageUrl?: string;
@@ -66,20 +61,12 @@ export default function InlineSettingsEditor({ initialSettings }: { initialSetti
         <summary style={{ cursor: 'pointer', fontWeight: 600 }}>Customize invitation (admin only)</summary>
         <form onSubmit={onSave} className="grid md:grid-cols-3 gap-3" style={{ marginTop: 12 }}>
           <div>
-            <label className="microcopy">Party Date (display)</label>
-            <input className="invite-input" value={settings.partyDateDisplay} onChange={(e) => setSettings({ ...settings, partyDateDisplay: e.target.value })} />
-          </div>
-          <div>
-            <label className="microcopy">Table's Ready (display)</label>
-            <input className="invite-input" value={settings.partyTimeDisplay} onChange={(e) => setSettings({ ...settings, partyTimeDisplay: e.target.value })} />
+            <label className="microcopy">Dedication Date (display)</label>
+            <input className="invite-input" value={settings.dedicationDateDisplay} onChange={(e) => setSettings({ ...settings, dedicationDateDisplay: e.target.value })} />
           </div>
           <div>
             <label className="microcopy">Dedication Time (display)</label>
             <input className="invite-input" value={settings.dedicationTimeDisplay} onChange={(e) => setSettings({ ...settings, dedicationTimeDisplay: e.target.value })} />
-          </div>
-          <div>
-            <label className="microcopy">Birthday Snack Location</label>
-            <input className="invite-input" value={settings.birthdaySnackLocation} onChange={(e) => setSettings({ ...settings, birthdaySnackLocation: e.target.value })} />
           </div>
           <div>
             <label className="microcopy">Location (display)</label>
@@ -90,24 +77,12 @@ export default function InlineSettingsEditor({ initialSettings }: { initialSetti
             <input className="invite-input" value={settings.dedicationTimeLabel} onChange={(e) => setSettings({ ...settings, dedicationTimeLabel: e.target.value })} />
           </div>
           <div>
-            <label className="microcopy">Table's Ready Label</label>
-            <input className="invite-input" value={settings.tableReadyLabel} onChange={(e) => setSettings({ ...settings, tableReadyLabel: e.target.value })} />
-          </div>
-          <div>
-            <label className="microcopy">Birthday Snack Location Label</label>
-            <input className="invite-input" value={settings.birthdaySnackLocationLabel} onChange={(e) => setSettings({ ...settings, birthdaySnackLocationLabel: e.target.value })} />
-          </div>
-          <div>
             <label className="microcopy">Location Label</label>
             <input className="invite-input" value={settings.locationLabel} onChange={(e) => setSettings({ ...settings, locationLabel: e.target.value })} />
           </div>
           <div className="md:col-span-3">
             <label className="microcopy">Gift Note</label>
             <textarea className="invite-input" value={settings.giftNote} onChange={(e) => setSettings({ ...settings, giftNote: e.target.value })} />
-          </div>
-          <div>
-            <label className="microcopy">Countdown ISO</label>
-            <input className="invite-input" value={settings.countdownISO} onChange={(e) => setSettings({ ...settings, countdownISO: e.target.value })} placeholder="2025-10-11T15:00:00" />
           </div>
           <div>
             <label className="microcopy">Venue Address</label>

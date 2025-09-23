@@ -4,6 +4,9 @@ import Link from 'next/link';
 import Script from 'next/script';
 import InlineSettingsEditor from './InlineSettingsEditor';
 import CoverImage from '@/components/CoverImage';
+import RsvpSection from '@/components/RsvpSection';
+import GodparentAcceptForm from '@/components/GodparentAcceptForm';
+import GuestInitialView from '@/components/GuestInitialView';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,15 +19,11 @@ export default async function InvitePage({ params, searchParams }: { params: Pro
   // Fetch guest via API to avoid bundling googleapis in page
   let guest: Guest | null = null;
   // Load settings for display text
-  let settings: { partyDateDisplay: string; partyTimeDisplay: string; dedicationTimeDisplay: string; birthdaySnackLocation: string; locationDisplay: string; dedicationTimeLabel: string; tableReadyLabel: string; birthdaySnackLocationLabel: string; locationLabel: string; dateLabel: string; addressLabel: string; mapLabel: string; dressCodeLabel: string; hostsLabel: string; giftNote: string; countdownISO: string; venueAddress?: string; venueMapUrl?: string; dressCode?: string; hostNames?: string } = {
-    partyDateDisplay: 'Oct 11, 2025',
-    partyTimeDisplay: '3:00 PM',
+  let settings: { dedicationDateDisplay: string; dedicationTimeDisplay: string; locationDisplay: string; dedicationTimeLabel: string; locationLabel: string; dateLabel: string; addressLabel: string; mapLabel: string; dressCodeLabel: string; hostsLabel: string; giftNote: string; venueAddress?: string; venueMapUrl?: string; dressCode?: string; hostNames?: string } = {
+    dedicationDateDisplay: 'Oct 11, 2025',
     dedicationTimeDisplay: '2:00 PM',
-    birthdaySnackLocation: 'Main Hall',
     locationDisplay: 'TBA',
     dedicationTimeLabel: 'Dedication Time',
-    tableReadyLabel: 'Table\'s Ready',
-    birthdaySnackLocationLabel: 'Birthday Snack Location',
     locationLabel: 'Location',
     dateLabel: 'Date',
     addressLabel: 'Address',
@@ -32,7 +31,6 @@ export default async function InvitePage({ params, searchParams }: { params: Pro
     dressCodeLabel: 'Dress code',
     hostsLabel: 'Hosts',
     giftNote: "Your presence is the most precious gift we could ask for. If you wish to bless Lauan further, we would deeply appreciate monetary gifts for his future needs or gift checks from department stores. 💙",
-    countdownISO: '2025-10-11T15:00:00',
   };
   if (guestId) {
     const h = await headers();
@@ -64,23 +62,28 @@ export default async function InvitePage({ params, searchParams }: { params: Pro
             <CoverImage 
               src="/cover.webp" 
               fallbackSrc="/cover.png"
-              alt="Birthday Celebration" 
+              alt="Dedication Ceremony" 
               className="cover-image"
             />
           </div>
 
           {/* Main Content Grid */}
-          <div className="content-grid">
+          <div className={`content-grid ${!(guest.isGodparent && (
+            (!guest.godparentAcceptedAt && !acceptedParam && !guest.godparentDeclinedAt) || 
+            guest.godparentDeclinedAt
+          )) ? 'has-sidebar' : 'no-sidebar'}`}>
             {/* Left Column - Main Content */}
             <div className="content-main">
               <div className="card-header">
                 <h1>Dear {guest.name},</h1>
-                <p>You&apos;re invited to celebrate a very special milestone.</p>
-              </div>
-
-              <div className="card-body">
-                <h2>Our little prince</h2>
-                <h2>is turning one!</h2>
+                <p>You&apos;re invited to join us for a very special ceremony.</p>
+                <p style={{ marginBottom: '1rem' }}>Dedication of</p>
+                <div className="celebrant-name-image">
+                  <img 
+                    src="/name.png" 
+                    alt="Lauan & Levi" 
+                  />
+                </div>
               </div>
 
               {isAdmin ? (
@@ -88,23 +91,7 @@ export default async function InvitePage({ params, searchParams }: { params: Pro
               ) : null}
 
               {guest.isGodparent && !guest.godparentAcceptedAt && !acceptedParam && !guest.godparentDeclinedAt && (
-                <div className="godparent-letter">
-                  <h3>A Special Request</h3>
-                  <p>We would be honored to have you as Ninong/Ninang. If you accept, please confirm your full legal name for the dedication certificate. Your information will remain private.</p>
-                  <form id="accept-form" action="/api/godparent-accept" method="POST" style={{ marginTop: '1rem', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '.75rem', alignItems: 'center' }}>
-                    <input type="hidden" name="uniqueId" value={guest.uniqueId} />
-                    <div style={{ position: 'relative', maxWidth: 360, width: '100%' }}>
-                      <span className="material-symbols-outlined" style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#666' }}>badge</span>
-                      <label htmlFor="fullName" className="microcopy" style={{ display: 'block', textAlign: 'left', marginBottom: 4 }}>Full legal name</label>
-                      <input id="fullName" type="text" name="fullName" placeholder="Full legal name" className="invite-input" style={{ paddingLeft: 40, maxWidth: 360 }} />
-                      <div className="microcopy" style={{ marginTop: 6 }}>Used only for the dedication certificate.</div>
-                    </div>
-                    <div style={{ display: 'flex', gap: '.75rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-                      <button type="submit" name="accept" value="yes" className="invite-button confirm"><span className="material-symbols-outlined">check_circle</span> I accept to be Godparent</button>
-                      <button type="submit" name="decline" value="yes" className="invite-button decline"><span className="material-symbols-outlined">cancel</span> I can't be a Godparent</button>
-                    </div>
-                  </form>
-                </div>
+                <GodparentAcceptForm guest={guest} />
               )}
 
               {guest.isGodparent && (guest.godparentAcceptedAt || acceptedParam) && (
@@ -112,65 +99,71 @@ export default async function InvitePage({ params, searchParams }: { params: Pro
                   <h3><span className="material-symbols-outlined">celebration</span> Thank you for accepting to be Godparent!</h3>
                   {guest.godparentAcceptedAt ? (<p><span className="material-symbols-outlined">event</span> Accepted on: <strong>{guest.godparentAcceptedAt}</strong></p>) : null}
                   {guest.godparentFullName ? (<p><span className="material-symbols-outlined">badge</span> Full Name: <strong>{guest.godparentFullName}</strong></p>) : null}
+                  
+                  {/* Show RSVP status if already completed */}
+                  {guest.status !== 'Pending' && (
+                    <p style={{ marginTop: '1rem', padding: '1rem', background: '#f8f9fa', borderRadius: '8px', border: '1px solid #e9ecef' }}>
+                      <span className="material-symbols-outlined" style={{ verticalAlign: 'middle', marginRight: '8px' }}>rsvp</span>
+                      Status: <strong>{guest.status}</strong>
+                    </p>
+                  )}
                 </div>
               )}
 
               {guest.isGodparent && guest.godparentDeclinedAt && (
                 <div className="rsvp-confirmed">
                   <h3><span className="material-symbols-outlined">handshake</span> Thanks for letting us know</h3>
-                  <p>You've declined the Godparent role on <strong>{guest.godparentDeclinedAt}</strong>. You can still RSVP as a guest below.</p>
+                  <p>You've declined the Godparent role on <strong>{guest.godparentDeclinedAt}</strong>.</p>
                 </div>
               )}
 
               <div className="party-details">
                 <div className="details-grid">
-                  <div className="detail-item">
-                    <div className="detail-icon">
-                      <span className="material-symbols-outlined">event</span>
+                  {/* Date and Time Row - Desktop: side by side, Mobile: stacked */}
+                  <div className="datetime-row">
+                    <div className="detail-item">
+                      <div className="detail-icon">
+                        <span className="material-symbols-outlined">event</span>
+                      </div>
+                      <div className="detail-content">
+                        <div className="detail-label">{settings.dateLabel}</div>
+                        <div className="detail-value">{settings.dedicationDateDisplay}</div>
+                      </div>
                     </div>
-                    <div className="detail-content">
-                      <div className="detail-label">{settings.dateLabel}</div>
-                      <div className="detail-value">{settings.partyDateDisplay}</div>
-                    </div>
-                  </div>
-                  
-                  <div className="detail-item">
-                    <div className="detail-icon">
-                      <span className="material-symbols-outlined">schedule</span>
-                    </div>
-                    <div className="detail-content">
-                      <div className="detail-label">{settings.dedicationTimeLabel}</div>
-                      <div className="detail-value">{settings.dedicationTimeDisplay}</div>
-                    </div>
-                  </div>
-                  
-                  <div className="detail-item">
-                    <div className="detail-icon">
-                      <span className="material-symbols-outlined">schedule</span>
-                    </div>
-                    <div className="detail-content">
-                      <div className="detail-label">{settings.tableReadyLabel}</div>
-                      <div className="detail-value">{settings.partyTimeDisplay}</div>
+                    
+                    <div className="detail-item">
+                      <div className="detail-icon">
+                        <span className="material-symbols-outlined">schedule</span>
+                      </div>
+                      <div className="detail-content">
+                        <div className="detail-label">{settings.dedicationTimeLabel}</div>
+                        <div className="detail-value">{settings.dedicationTimeDisplay}</div>
+                      </div>
                     </div>
                   </div>
                   
-                  <div className="detail-item">
-                    <div className="detail-icon">
-                      <span className="material-symbols-outlined">location_on</span>
-                    </div>
-                    <div className="detail-content">
-                      <div className="detail-label">{settings.birthdaySnackLocationLabel}</div>
-                      <div className="detail-value">{settings.birthdaySnackLocation}</div>
-                    </div>
-                  </div>
-                  
-                  <div className="detail-item">
+                  {/* Location - Full width */}
+                  <div className="detail-item location-item">
                     <div className="detail-icon">
                       <span className="material-symbols-outlined">location_on</span>
                     </div>
                     <div className="detail-content">
                       <div className="detail-label">{settings.locationLabel}</div>
-                      <div className="detail-value">{settings.locationDisplay}</div>
+                      <div className="detail-value location-with-map">
+                        <div className="location-text">{settings.locationDisplay}</div>
+                        {settings.venueMapUrl && (
+                          <a 
+                            href={settings.venueMapUrl} 
+                            target="_blank" 
+                            rel="noreferrer"
+                            className="map-badge"
+                            title="Open in Maps"
+                          >
+                            <span className="material-symbols-outlined">map</span>
+                            <span className="map-text">Open Map</span>
+                          </a>
+                        )}
+                      </div>
                     </div>
                   </div>
                   
@@ -181,20 +174,20 @@ export default async function InvitePage({ params, searchParams }: { params: Pro
                       </div>
                       <div className="detail-content">
                         <div className="detail-label">{settings.addressLabel}</div>
-                        <div className="detail-value">{settings.venueAddress}</div>
-                      </div>
-                    </div>
-                  )}
-                  
-                  {settings.venueMapUrl && (
-                    <div className="detail-item">
-                      <div className="detail-icon">
-                        <span className="material-symbols-outlined">map</span>
-                      </div>
-                      <div className="detail-content">
-                        <div className="detail-label">{settings.mapLabel}</div>
-                        <div className="detail-value">
-                          <a className="detail-link" href={settings.venueMapUrl} target="_blank" rel="noreferrer">Open map</a>
+                        <div className="detail-value address-with-map">
+                          <div className="address-text">{settings.venueAddress}</div>
+                          {settings.venueMapUrl && (
+                            <a 
+                              href={settings.venueMapUrl} 
+                              target="_blank" 
+                              rel="noreferrer"
+                              className="map-badge"
+                              title="Open in Maps"
+                            >
+                              <span className="material-symbols-outlined">map</span>
+                              <span className="map-text">Open Map</span>
+                            </a>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -230,59 +223,15 @@ export default async function InvitePage({ params, searchParams }: { params: Pro
             </div>
 
             {/* Right Column - Interactive Elements */}
-            <div className="content-sidebar">
-              <div id="countdown">
-                <h3><span className="material-symbols-outlined">timer</span> Countdown to the party</h3>
-                <div className="countdown-grid-new" aria-live="polite">
-                  <div className="countdown-box-new">
-                    <span className="countdown-number-new" id="cd-days" style={{ ['--value' as unknown as string]: 0 as unknown as string } as React.CSSProperties}>0</span>
-                    <div className="countdown-label-new">days</div>
-                  </div>
-                  <div className="countdown-box-new">
-                    <span className="countdown-number-new" id="cd-hours" style={{ ['--value' as unknown as string]: 0 as unknown as string } as React.CSSProperties}>0</span>
-                    <div className="countdown-label-new">hours</div>
-                  </div>
-                  <div className="countdown-box-new">
-                    <span className="countdown-number-new" id="cd-minutes" style={{ ['--value' as unknown as string]: 0 as unknown as string } as React.CSSProperties}>0</span>
-                    <div className="countdown-label-new">min</div>
-                  </div>
-                  <div className="countdown-box-new">
-                    <span className="countdown-number-new" id="cd-seconds" style={{ ['--value' as unknown as string]: 0 as unknown as string } as React.CSSProperties}>0</span>
-                    <div className="countdown-label-new">sec</div>
-                  </div>
-                </div>
+            {/* Hide entire sidebar for godparents who haven't made their decision yet or have declined */}
+            {!(guest.isGodparent && (
+              (!guest.godparentAcceptedAt && !acceptedParam && !guest.godparentDeclinedAt) || 
+              guest.godparentDeclinedAt
+            )) && (
+              <div className="content-sidebar">
+                <GuestInitialView guest={guest} editMode={editMode} />
               </div>
-
-              {(guest.status === 'Pending' || editMode ? (
-                <div className="rsvp-form">
-                  <h3><span className="material-symbols-outlined">rsvp</span> Will you be joining us?</h3>
-                  <form id="rsvp-form" action="/api/rsvp" method="POST">
-                    <input type="hidden" name="uniqueId" value={guest.uniqueId} />
-                    <button type="submit" name="status" value="Confirmed" className="invite-button confirm"><span className="material-symbols-outlined">check_circle</span> I&apos;m attending</button>
-                    <button type="submit" name="status" value="Declined" className="invite-button decline"><span className="material-symbols-outlined">cancel</span> Can&apos;t make it</button>
-                  </form>
-                </div>
-              ) : (
-                <div className="rsvp-confirmed">
-                  <h3><span className="material-symbols-outlined">celebration</span> Thank you for your response!</h3>
-                  <p>Your status: <strong>{guest.status}</strong></p>
-                  <div style={{ marginTop: 8 }}>
-                    <a className="underline" href={`/invites/${guest.uniqueId}?edit=1`}>Change your response</a>
-                  </div>
-                  <div className="qr-section" style={{ marginTop: 12 }}>
-                    <h3><span className="material-symbols-outlined">qr_code</span> Save Your Invitation</h3>
-                    <div className="qr-code">
-                      <img alt="Invitation QR Code" src={`/api/qr?url=/invites/${guest.uniqueId}&size=144`} width={144} height={144} style={{ borderRadius: 8 }} />
-                    </div>
-                    <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', marginTop: 8 }}>
-                      <a href={`/api/qr?url=/invites/${guest.uniqueId}&size=512`} download={`invitation-${guest.uniqueId}.png`} className="invite-button primary">
-                        <span className="material-symbols-outlined">download</span> Download QR
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+            )}
           </div>
         </div>
       ) : (
@@ -295,85 +244,6 @@ export default async function InvitePage({ params, searchParams }: { params: Pro
       <Script id="invite-scripts" strategy="afterInteractive">
         {`
           (function(){
-            const partyDate = '${settings.countdownISO}';
-            const countDownDate = new Date(partyDate).getTime();
-            const elDays = document.getElementById('cd-days');
-            const elHours = document.getElementById('cd-hours');
-            const elMinutes = document.getElementById('cd-minutes');
-            const elSeconds = document.getElementById('cd-seconds');
-            function setNumber(el, value) {
-              if (!el) return;
-              const prev = el.getAttribute('data-prev') || '';
-              const next = String(value);
-              if (prev !== next) {
-                el.setAttribute('data-prev', next);
-                el.textContent = '';
-                try { el.style.setProperty('--value', next); } catch {}
-                const box = el.parentElement;
-                if (box) {
-                  box.classList.remove('tick');
-                  void box.offsetWidth; // reflow to restart animation
-                  box.classList.add('tick');
-                }
-                el.setAttribute('aria-label', next);
-              }
-            }
-            const x = setInterval(function() {
-              const now = new Date().getTime();
-              let distance = countDownDate - now;
-              if (distance < 0) distance = 0;
-              const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-              const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-              const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-              const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-              setNumber(elDays, days);
-              setNumber(elHours, hours);
-              setNumber(elMinutes, minutes);
-              setNumber(elSeconds, seconds);
-              if (distance <= 0) { clearInterval(x); }
-            }, 1000);
-            const af = document.getElementById('accept-form');
-            if (af) {
-              af.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const data = new FormData(af);
-                const submitter = e.submitter;
-                // @ts-ignore
-                if (submitter && submitter.name) { data.append(submitter.name, submitter.value || 'yes'); } else { data.append('accept', 'yes'); }
-
-                // Check if declining - fullname not required
-                const isDeclining = submitter?.name === 'decline' || data.get('decline') === 'yes';
-                const fullNameInput = document.getElementById('fullName');
-                const fullName = fullNameInput && fullNameInput.value ? fullNameInput.value.trim() : '';
-
-                // Require fullname only when accepting
-                if (!isDeclining && !fullName) {
-                  alert('Please enter your full legal name to accept the godparent role.');
-                  fullNameInput?.focus();
-                  return;
-                }
-
-                const res = await fetch(af.getAttribute('action') || '/api/godparent-accept', { method: 'POST', body: data, headers: { Accept: 'application/json' } });
-                if (res.ok) {
-                  try { const json = await res.json(); const url = new URL(location.href); if (json && json.action === 'accepted') { url.searchParams.set('accepted', '1'); } location.href = url.toString(); } catch { location.reload(); }
-                } else { const t = await res.text().catch(()=>''); alert(t || 'Failed to submit response'); }
-              });
-            }
-            const rf = document.getElementById('rsvp-form');
-            if (rf) {
-              rf.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const data = new FormData(rf);
-                const submitter = e.submitter;
-                if (submitter && submitter.name) {
-                  // @ts-ignore - submitter is HTMLButtonElement in modern browsers
-                  data.append(submitter.name, submitter.value);
-                }
-                const res = await fetch(rf.getAttribute('action') || '/api/rsvp', { method: 'POST', body: data, headers: { Accept: 'application/json' } });
-                if (res.ok) { const json = await res.json().catch(() => null); if (json?.ok) { const params = new URLSearchParams(location.search); const uid = params.get('uniqueId') || '${guest?.uniqueId || ''}'; const redirectUrl = '/thank-you?uniqueId=' + encodeURIComponent(uid) + '&status=' + encodeURIComponent(json.status); location.href = redirectUrl; } else { location.href = '/thank-you'; } }
-                else { const t = await res.text().catch(()=>''); alert(t || 'Failed to submit RSVP'); }
-              });
-            }
 
             // Dummy hero loading ring: complete in ~5s then fade out
             try {

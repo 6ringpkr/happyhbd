@@ -3,7 +3,7 @@
     font-family: 'Poppins', sans-serif;
     background:
         linear-gradient(0deg, rgba(255,255,255,0.9), rgba(255,255,255,0.9)),
-        url('/pattern.png') center center / 360px repeat fixed,
+        url('/pattern.png') center center / 600px repeat fixed,
         #0b1b2f;
     color: #0f2b46;
     min-height: 100vh;
@@ -13,6 +13,27 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+/* General material icons styling */
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    line-height: 1;
+    margin-right: 6px;
+}
+
+/* Icons in headings and paragraphs */
+h1 .material-symbols-outlined,
+h2 .material-symbols-outlined,
+h3 .material-symbols-outlined,
+h4 .material-symbols-outlined,
+p .material-symbols-outlined {
+    vertical-align: middle;
+    margin-right: 8px;
 }
 
 .material-symbols-outlined.icon {
@@ -43,7 +64,7 @@
 /* Horizontal Cover Image */
 .cover-section {
     width: 100%;
-    height: 200px;
+    height: 100%;
     overflow: hidden;
     border-radius: 22px 22px 0 0;
     position: relative;
@@ -204,9 +225,21 @@
 }
 
 .details-grid {
-    display: grid;
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
     gap: 16px;
+}
+
+/* Date and Time Row - Desktop: side by side, Mobile: stacked */
+.datetime-row {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Location item takes full width */
+.location-item {
+    width: 100%;
 }
 
 .detail-item {
@@ -237,6 +270,17 @@
     border-radius: 10px;
     color: white;
     font-size: 18px;
+}
+
+/* Ensure icons inside detail badges are perfectly centered */
+.detail-icon .material-symbols-outlined {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    font-size: 18px;
+    line-height: 1;
+    vertical-align: middle;
 }
 
 .detail-content {
@@ -496,11 +540,19 @@
     border: 1px solid #d6eaff;
 }
 
-/* Tablet Layout - Two Column Details */
+/* Tablet Layout - Date and Time side by side */
 @media (min-width: 640px) {
-    .details-grid {
-        grid-template-columns: repeat(2, 1fr);
+    .datetime-row {
+        flex-direction: row;
         gap: 20px;
+    }
+    
+    .datetime-row .detail-item {
+        flex: 1;
+    }
+    
+    .cover-section {
+        height: 100%;
     }
 }
 
@@ -512,6 +564,19 @@
         padding: 40px;
     }
     
+    /* When sidebar is hidden, center the content */
+    .content-grid.no-sidebar {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .content-grid.no-sidebar .content-main {
+        max-width: 600px;
+        width: 100%;
+    }
+    
     .content-sidebar {
         margin-top: 0;
         text-align: center;
@@ -521,20 +586,14 @@
     }
     
     .cover-section {
-        height: 250px;
-    }
-    
-    .details-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 24px;
+        height: 100%;
     }
 }
 
-/* Large Desktop - Three Column Details */
+/* Large Desktop - Maintain same layout */
 @media (min-width: 1024px) {
-    .details-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
+    .cover-section {
+        height: 100%;
     }
 }
 
@@ -566,6 +625,30 @@
     
     .detail-value {
         font-size: 0.95em;
+    }
+    
+    /* Better touch targets for mobile */
+    .invite-button {
+        min-height: 48px;
+        padding: 12px 20px;
+    }
+    
+    /* Improve modal on mobile */
+    .modal {
+        margin: 16px;
+        max-height: calc(100vh - 32px);
+        overflow-y: auto;
+    }
+    
+    /* Better spacing for mobile */
+    .godparent-letter {
+        padding: 16px;
+        margin: 20px 0;
+    }
+    
+    .rsvp-confirmed {
+        padding: 16px;
+        margin: 20px 0;
     }
 }
 
@@ -604,4 +687,298 @@
     border: 1px solid #d6eaff;
     background: #fff;
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+}
+
+/* Thank you page specific styles */
+.thank-you-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    text-align: center;
+    padding: 3rem 2rem;
+    border-radius: 22px 22px 0 0;
+}
+
+.thank-you-message {
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    border: 2px solid;
+}
+
+.thank-you-message.confirmed {
+    background: #f0f9ff;
+    border-color: #0ea5e9;
+}
+
+.thank-you-message.declined {
+    background: #fef3f2;
+    border-color: #f87171;
+}
+
+.detail-link {
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.detail-link:hover {
+    color: #1d4ed8;
+    text-decoration: underline;
+}
+
+/* Enhanced QR section for thank you page */
+.thank-you-qr {
+    background: #f8fafc;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.thank-you-qr h3 {
+    margin-bottom: 1rem;
+    color: #374151;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.thank-you-qr .qr-code img {
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+}
+
+.thank-you-qr .qr-code img:hover {
+    transform: scale(1.05);
+}
+
+/* Sticky QR section for thank you page */
+.sticky-qr {
+    position: sticky !important;
+    top: 2rem;
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.sticky-qr:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* Compact event summary styles */
+.compact-event-summary {
+    background: #f8fafc;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 1.5rem;
+}
+
+.compact-event-summary .event-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 0.5rem;
+}
+
+.compact-event-summary .event-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.75rem;
+    font-size: 0.9rem;
+}
+
+.compact-event-summary .event-detail {
+    display: flex;
+    flex-direction: column;
+}
+
+.compact-event-summary .event-detail-label {
+    color: #6b7280;
+    font-size: 0.8rem;
+    margin-bottom: 2px;
+}
+
+.compact-event-summary .event-detail-value {
+    font-weight: 500;
+    color: #374151;
+}
+
+/* Celebrant name image styling */
+.celebrant-name-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1rem 0;
+    padding: 0.5rem;
+}
+
+.celebrant-name-image img {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.1));
+    transition: transform 0.3s ease;
+}
+
+.celebrant-name-image img:hover {
+    transform: scale(1.02);
+}
+
+/* Responsive adjustments for name image */
+@media (max-width: 768px) {
+    .celebrant-name-image {
+        padding: 0.25rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .celebrant-name-image {
+        padding: 0.125rem;
+    }
+}
+
+/* Address with map link styling */
+.address-with-map,
+.location-with-map {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.address-text,
+.location-text {
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+.map-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: #3b82f6;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    transition: all 0.2s ease;
+    align-self: flex-start;
+}
+
+.map-link:hover {
+    background: #e0f2fe;
+    border-color: #7dd3fc;
+    color: #1d4ed8;
+    transform: translateY(-1px);
+}
+
+.map-link .material-symbols-outlined {
+    font-size: 1rem;
+}
+
+/* Map badge styling - inline button badge */
+.map-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    color: white;
+    text-decoration: none;
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    background: linear-gradient(135deg, #1c82ff 0%, #0f62fe 100%);
+    border: 1px solid rgba(28, 130, 255, 0.3);
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(28, 130, 255, 0.2);
+}
+
+.map-badge:hover {
+    background: linear-gradient(135deg, #0f62fe 0%, #0d4db8 100%);
+    border-color: rgba(28, 130, 255, 0.4);
+    color: white;
+    text-decoration: none;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(28, 130, 255, 0.3);
+}
+
+.map-badge .material-symbols-outlined {
+    font-size: 16px;
+    margin: 0;
+}
+
+.map-text {
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+/* Desktop view - put address and map link on same line */
+@media (min-width: 768px) {
+    .address-with-map {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+    
+    .address-text {
+        flex: 1;
+        min-width: 0; /* Allow text to wrap */
+    }
+    
+    .map-link {
+        flex-shrink: 0;
+        margin-top: 0.125rem; /* Slight alignment adjustment */
+    }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Focus styles for better accessibility */
+.invite-button:focus,
+.invite-input:focus,
+button:focus,
+input:focus {
+    outline: 2px solid #1c82ff;
+    outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .invite-page .card {
+        border: 2px solid #000;
+    }
+    
+    .invite-button {
+        border: 2px solid currentColor;
+    }
+}
+
+/* Screen reader only text */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }

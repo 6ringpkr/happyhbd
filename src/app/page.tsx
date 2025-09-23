@@ -39,6 +39,9 @@ export default function Home() {
   const [sortBy, setSortBy] = useState<'name'|'status'|'rsvpAt'>('name');
   const [sortDir, setSortDir] = useState<'asc'|'desc'>('asc');
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
 
   // SWR fetcher and data
   const fetcher = (url: string) => fetch(url, { headers: { Accept: 'application/json' } }).then((r) => r.json());
@@ -103,6 +106,53 @@ export default function Home() {
   useEffect(() => {
     localStorage.setItem('admin:auto', auto ? '1' : '0');
   }, [auto]);
+
+  // Check login status
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      try {
+        const res = await fetch('/api/settings', { 
+          headers: { Accept: 'application/json' },
+          credentials: 'include'
+        });
+        setIsLoggedIn(res.ok);
+      } catch {
+        setIsLoggedIn(false);
+      }
+    };
+    checkLoginStatus();
+  }, []);
+
+  // Login handler
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginError('');
+    try {
+      const formData = new FormData();
+      formData.append('password', loginPassword);
+      const res = await fetch('/api/admin-login', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include'
+      });
+      if (res.ok) {
+        setIsLoggedIn(true);
+        setLoginPassword('');
+      } else {
+        const json = await res.json().catch(() => null);
+        setLoginError(json?.error || 'Login failed');
+      }
+    } catch (error) {
+      setLoginError('Network error - please try again');
+    }
+  };
+
+  // Logout handler
+  const handleLogout = () => {
+    // Clear the admin session cookie by setting it to expire
+    document.cookie = 'admin_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    setIsLoggedIn(false);
+  };
 
   // Sync SWR data into local state for existing render logic
   useEffect(() => {
@@ -298,9 +348,47 @@ export default function Home() {
           borderCard={borderCard}
           btnNeutral={btnNeutral}
           inputClass={inputClass}
+          onLogout={handleLogout}
         />
 
-        <Stats
+        {/* Admin Login Form */}
+        {isLoggedIn === false && (
+          <div className={`${sectionCard} border ${roundedSection} p-6`}>
+            <h2 className="text-lg font-medium mb-4">Admin Login Required</h2>
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium mb-2">
+                  Admin Password
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
+                  className={`${inputClass} w-full`}
+                  placeholder="Enter admin password"
+                  required
+                />
+              </div>
+              {loginError && (
+                <div className="text-red-600 text-sm bg-red-50 border border-red-200 rounded-lg p-3">
+                  {loginError}
+                </div>
+              )}
+              <button
+                type="submit"
+                className={`${btnPrimary} w-full`}
+              >
+                Login
+              </button>
+            </form>
+          </div>
+        )}
+
+        {/* Dashboard Content - Only show when logged in */}
+        {isLoggedIn === true && (
+          <>
+            <Stats
           stats={stats}
           statsCard={statsCard}
           textMuted={textMuted}
@@ -363,6 +451,8 @@ export default function Home() {
           zebra={zebra}
           roundedTable={roundedTable}
         />
+          </>
+        )}
       </div>
     </div>
   );
