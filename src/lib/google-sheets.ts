@@ -331,7 +331,7 @@ export const DEFAULT_SETTINGS: Settings = {
   dressCodeLabel: 'Dress code',
   hostsLabel: 'Hosts',
   giftNote:
-    'We would be honored to have you celebrate with us. Your presence is the most precious gift we could ask for.💙',
+    'Your presence is the most precious gift we could ask for. If you wish to bless Lauan further, we would deeply appreciate monetary gifts for his future needs or gift checks from department stores. 💙',
   eventTitle: 'Dedication Ceremony',
   celebrantName: '',
   celebrantImageUrl: '',
