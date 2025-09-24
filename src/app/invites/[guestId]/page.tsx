@@ -103,6 +103,16 @@ export default async function InvitePage({ params, searchParams }: { params: Pro
                   {guest.godparentAcceptedAt ? (<p><span className="material-symbols-outlined">event</span> Accepted on: <strong>{guest.godparentAcceptedAt}</strong></p>) : null}
                   {guest.godparentFullName ? (<p><span className="material-symbols-outlined">badge</span> Full Name: <strong>{guest.godparentFullName}</strong></p>) : null}
                   
+                  {/* Show RSVP section for godparents who haven't RSVP'd yet */}
+                  {guest.status === 'Pending' && (
+                    <div style={{ marginTop: '1rem', padding: '1rem', background: '#f8f9fa', borderRadius: '8px', border: '1px solid #e9ecef' }}>
+                      <p style={{ marginBottom: '0.5rem', fontSize: '14px', color: '#6c757d' }}>
+                        Now that you've accepted to be a godparent, please let us know if you'll be attending the ceremony.
+                      </p>
+                      <RsvpSection guest={guest} editMode={false} />
+                    </div>
+                  )}
+                  
                   {/* Show RSVP status if already completed */}
                   {guest.status !== 'Pending' && (
                     <p style={{ marginTop: '1rem', padding: '1rem', background: '#f8f9fa', borderRadius: '8px', border: '1px solid #e9ecef' }}>
@@ -116,8 +126,13 @@ export default async function InvitePage({ params, searchParams }: { params: Pro
               {guest.isGodparent && guest.godparentDeclinedAt && (
                 <div className="rsvp-confirmed">
                   <h3><span className="material-symbols-outlined">handshake</span> Thanks for letting us know</h3>
-                  <p>You've declined the Godparent role on <strong>{guest.godparentDeclinedAt}</strong>.</p>
+                  <p>You've declined the Godparent role on <strong>{guest.godparentDeclinedAt}</strong>. You can still RSVP as a guest below.</p>
                 </div>
+              )}
+
+              {/* RSVP Section for regular guests or godparents who declined */}
+              {(!guest.isGodparent || guest.godparentDeclinedAt) && (
+                <RsvpSection guest={guest} editMode={editMode} />
               )}
 
               <div className="party-details">
