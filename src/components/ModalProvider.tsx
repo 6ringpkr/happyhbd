@@ -8,3 +8,5 @@ export default function ModalProvider({ children }: { children: React.ReactNode 
     </NiceModal.Provider>
   );
 }
+
+

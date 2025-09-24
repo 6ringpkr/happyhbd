@@ -137,7 +137,7 @@ export function Header({
           className={`${btnNeutral} focus-visible:ring-2 focus-visible:ring-[#4c6fff]`}
           variant="secondary"
           onClick={() => {
-            const header = ['name','uniqueId','status','rsvpAt','isGodparent','godparentAcceptedAt','invite'];
+            const header = ['name','uniqueId','status','rsvpAt','isGodparent','godparentAcceptedAt','invite_link'];
             const rows = filtered.map(g => [g.name, g.uniqueId, g.status, g.rsvpAt, g.isGodparent ? 'TRUE' : 'FALSE', g.godparentAcceptedAt, `${location.origin}/invites/${g.uniqueId}`]);
             const csv = [header, ...rows].map(r => r.map(v => `"${String(v ?? '').replace(/"/g,'""')}"`).join(',')).join('\n');
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -147,7 +147,22 @@ export function Header({
             a.click();
             URL.revokeObjectURL(a.href);
           }}
-        >Export CSV</Button>
+        >Export All Data</Button>
+        <Button
+          className={`${btnNeutral} focus-visible:ring-2 focus-visible:ring-[#4c6fff]`}
+          variant="secondary"
+          onClick={() => {
+            const header = ['name','invite_link'];
+            const rows = filtered.map(g => [g.name, `${location.origin}/invites/${g.uniqueId}`]);
+            const csv = [header, ...rows].map(r => r.map(v => `"${String(v ?? '').replace(/"/g,'""')}"`).join(',')).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `invite-links-${Date.now()}.csv`;
+            a.click();
+            URL.revokeObjectURL(a.href);
+          }}
+        >Export Invite Links</Button>
         <button
           onClick={onLogout}
           className={`px-3 py-2 rounded-lg border ${borderCard} bg-transparent ${textSecondary} hover:bg-red-50 hover:text-red-600 hover:border-red-200`}

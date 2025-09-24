@@ -4,6 +4,7 @@ import useSWR from 'swr';
 import { Header } from './components/Header';
 import { Stats } from './components/Stats';
 import { InvitationsPanel } from './components/InvitationsPanel';
+import { SettingsPanel } from './components/SettingsPanel';
 import { GuestsTable } from './components/GuestsTable';
 
 type Guest = {
@@ -38,6 +39,19 @@ export default function AdminPage() {
   const [sortBy, setSortBy] = useState<'name'|'status'|'rsvpAt'>('name');
   const [sortDir, setSortDir] = useState<'asc'|'desc'>('asc');
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+
+  // Logout handler
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/admin-logout', { method: 'POST' });
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Logout failed:', error);
+      // Fallback: clear cookie manually and redirect
+      document.cookie = 'admin_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      window.location.href = '/';
+    }
+  };
 
   // SWR fetcher and data
   const fetcher = (url: string) => fetch(url, { headers: { Accept: 'application/json' } }).then((r) => r.json());
@@ -282,6 +296,7 @@ export default function AdminPage() {
           borderCard={borderCard}
           btnNeutral={btnNeutral}
           inputClass={inputClass}
+          onLogout={handleLogout}
         />
 
         <Stats
@@ -322,7 +337,13 @@ export default function AdminPage() {
           roundedSection={roundedSection}
         />
 
-        {/* Settings removed intentionally */}
+        <SettingsPanel
+          sectionCard={sectionCard}
+          inputClass={inputClass}
+          textMuted={textMuted}
+          btnPrimary={btnPrimary}
+          roundedSection={roundedSection}
+        />
 
         <GuestsTable
           loading={loading}

@@ -110,7 +110,6 @@ export default function GodparentAcceptForm({ guest }: GodparentAcceptFormProps)
           <div id="accept-description" style={{ display: 'none' }}>Accept the godparent role and provide your full legal name</div>
           <div id="decline-description" style={{ display: 'none' }}>Decline the godparent role</div>
           <div style={{ position: 'relative', maxWidth: 360, width: '100%' }}>
-            <span className="material-symbols-outlined" style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#666' }}>badge</span>
             <label htmlFor="fullName" className="microcopy" style={{ display: 'block', textAlign: 'left', marginBottom: 4 }}>Full legal name</label>
             <input 
               id="fullName" 
@@ -119,7 +118,7 @@ export default function GodparentAcceptForm({ guest }: GodparentAcceptFormProps)
               onChange={(e) => setFullName(e.target.value)}
               placeholder="Full legal name" 
               className="invite-input" 
-              style={{ paddingLeft: 40, maxWidth: 360 }}
+              style={{ maxWidth: 360 }}
               aria-describedby="fullName-help"
               required
             />

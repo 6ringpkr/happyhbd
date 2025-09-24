@@ -49,9 +49,12 @@ export default async function InvitePage({ params, searchParams }: { params: Pro
       const json = await resSettings.json().catch(() => null);
       if (json?.settings) settings = json.settings;
     }
+    // If settings API fails (e.g., not admin), continue with default settings
   }
 
-  const isAdmin = !!(await cookies()).get('admin_session');
+  // Check admin session with proper validation
+  const adminCookie = (await cookies()).get('admin_session');
+  const isAdmin = !!(adminCookie?.value === '1');
 
   return (
     <div className="invite-page">
@@ -76,8 +79,8 @@ export default async function InvitePage({ params, searchParams }: { params: Pro
             <div className="content-main">
               <div className="card-header">
                 <h1>Dear {guest.name},</h1>
-                <p>You&apos;re invited to join us for a very special ceremony.</p>
-                <p style={{ marginBottom: '1rem' }}>Dedication of</p>
+                <p>We&apos;d love to invite you to a very special milestone in our lives —</p>
+                <p style={{ marginBottom: '1rem' }}>the Dedication of our son</p>
                 <div className="celebrant-name-image">
                   <img 
                     src="/name.png" 

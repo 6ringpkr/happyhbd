@@ -3,7 +3,14 @@ import { getSettings, updateSettings } from '@/lib/google-sheets';
 
 const COOKIE_NAME = 'admin_session';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  // Require admin cookie for GET requests too
+  const cookie = request.cookies.get(COOKIE_NAME)?.value;
+  
+  if (!cookie || cookie !== '1') {
+    return NextResponse.json({ error: 'Unauthorized - Please log in as admin first' }, { status: 401 });
+  }
+  
   const settings = await getSettings();
   return NextResponse.json({ settings });
 }
