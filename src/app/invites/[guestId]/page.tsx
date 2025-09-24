@@ -20,17 +20,17 @@ export default async function InvitePage({ params, searchParams }: { params: Pro
   let guest: Guest | null = null;
   // Load settings for display text
   let settings: { dedicationDateDisplay: string; dedicationTimeDisplay: string; locationDisplay: string; dedicationTimeLabel: string; locationLabel: string; dateLabel: string; addressLabel: string; mapLabel: string; dressCodeLabel: string; hostsLabel: string; giftNote: string; venueAddress?: string; venueMapUrl?: string; dressCode?: string; hostNames?: string } = {
-    dedicationDateDisplay: 'Oct 11, 2025',
-    dedicationTimeDisplay: '2:00 PM',
-    locationDisplay: 'TBA',
-    dedicationTimeLabel: 'Dedication Time',
+    dedicationDateDisplay: 'Oct 11, 2025 (Saturday)',
+    dedicationTimeDisplay: '10:00 AM',
+    locationDisplay: 'Celebration Church | 243 Purok 2 Banlic, Calamba City, Laguna',
+    dedicationTimeLabel: 'Time',
     locationLabel: 'Location',
     dateLabel: 'Date',
     addressLabel: 'Address',
     mapLabel: 'Map',
     dressCodeLabel: 'Dress code',
     hostsLabel: 'Hosts',
-    giftNote: "Your presence is the most precious gift we could ask for. If you wish to bless Lauan further, we would deeply appreciate monetary gifts for his future needs or gift checks from department stores. 💙",
+    giftNote: "We would be honored to have you celebrate with us. Your presence is the most precious gift we could ask for.💙",
   };
   if (guestId) {
     const h = await headers();
