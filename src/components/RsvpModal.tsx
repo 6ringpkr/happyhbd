@@ -13,18 +13,27 @@ const RsvpModal = NiceModal.create(({ uniqueId, initialStatus }: RsvpModalProps)
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Prevent closing modal with Escape key since there's no close button
+  const handleClose = () => {
+    console.log('handleClose called');
+    try {
+      modal.hide();
+    } catch (error) {
+      console.error('Error closing modal:', error);
+    }
+  };
+
+  // Handle Escape key to close modal
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        event.preventDefault();
-        event.stopPropagation();
+      if (event.key === 'Escape' && !isSubmitting) {
+        console.log('Escape key pressed, closing modal');
+        handleClose();
       }
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [isSubmitting]);
 
   const handleSubmit = async () => {
     if (!selectedStatus) return;
@@ -73,13 +82,34 @@ const RsvpModal = NiceModal.create(({ uniqueId, initialStatus }: RsvpModalProps)
       <div 
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
         aria-hidden="true"
+        onClick={() => {
+          if (!isSubmitting) {
+            console.log('Backdrop clicked, closing modal');
+            handleClose();
+          }
+        }}
       />
       
       {/* Modal */}
-      <div className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 overflow-hidden">
+      <div 
+        className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4">
-          <div className="text-center">
+        <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4 relative">
+          <button
+            onClick={() => {
+              console.log('Close button clicked');
+              handleClose();
+            }}
+            disabled={isSubmitting}
+            className="absolute top-4 right-4 p-2 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label="Close modal"
+            title="Close (ESC)"
+          >
+            <span className="material-symbols-outlined text-xl">close</span>
+          </button>
+          <div className="text-center pr-8">
             <h2 id="rsvp-modal-title" className="text-xl font-semibold text-white">
               Will you be joining us?
             </h2>

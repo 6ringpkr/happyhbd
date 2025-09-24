@@ -39,6 +39,7 @@ export default async function ThankYouPage({ searchParams }: { searchParams?: Pr
     hostsLabel: 'Hosts',
     giftNote:
       'We would be honored to have you celebrate with us. Your presence is the most precious gift we could ask for.💙',
+    venueMapUrl: 'https://maps.app.goo.gl/WKZxYMgytgadwv9i7',
   };
   try {
     const h = await headers();

@@ -103,7 +103,7 @@ export default function GodparentAcceptForm({ guest }: GodparentAcceptFormProps)
   return (
     <div className="godparent-letter">
       <h3>A Special Request</h3>
-      <p>We would be honored to have you as Ninong/Ninang. If you accept, please confirm your full legal name for the dedication certificate. Your information will remain private.</p>
+      <p>We would be honored to have you as <em>Ninong/Ninang</em>. If you accept, please confirm your full legal name for the dedication certificate. Your information will remain private.</p>
       
       {!showRsvpOptions ? (
         <form style={{ marginTop: '1rem', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '.75rem', alignItems: 'center' }}>
@@ -116,7 +116,7 @@ export default function GodparentAcceptForm({ guest }: GodparentAcceptFormProps)
               type="text" 
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              placeholder="Full legal name" 
+              placeholder="JUAN DELA CRUZ" 
               className="invite-input" 
               style={{ maxWidth: 360 }}
               aria-describedby="fullName-help"
@@ -126,49 +126,50 @@ export default function GodparentAcceptForm({ guest }: GodparentAcceptFormProps)
           </div>
           
           <div style={{ display: 'flex', gap: '.75rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-            <button 
-              type="button"
-              onClick={() => handleGodparentSubmit(true)}
-              disabled={isSubmitting}
-              className="invite-button confirm"
-              style={{ 
-                opacity: isSubmitting ? 0.7 : 1,
-                cursor: isSubmitting ? 'not-allowed' : 'pointer'
-              }}
-              aria-describedby="accept-description"
-            >
-              {isSubmitting ? (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <div style={{ 
-                    width: '16px', 
-                    height: '16px', 
-                    border: '2px solid rgba(255,255,255,0.3)', 
-                    borderTop: '2px solid white', 
-                    borderRadius: '50%', 
-                    animation: 'spin 1s linear infinite' 
-                  }} />
-                  Accepting...
-                </div>
-              ) : (
-                <>
+            {isSubmitting ? (
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '12px',
+                padding: '12px 24px',
+                background: 'linear-gradient(135deg, #1c82ff 0%, #0f62fe 100%)',
+                color: 'white',
+                borderRadius: '12px',
+                fontSize: '16px',
+                fontWeight: '600',
+                boxShadow: '0 4px 15px rgba(28, 130, 255, 0.3)'
+              }}>
+                <div style={{ 
+                  width: '20px', 
+                  height: '20px', 
+                  border: '2px solid rgba(255,255,255,0.3)', 
+                  borderTop: '2px solid white', 
+                  borderRadius: '50%', 
+                  animation: 'spin 1s linear infinite' 
+                }} />
+                Submitting...
+              </div>
+            ) : (
+              <>
+                <button 
+                  type="button"
+                  onClick={() => handleGodparentSubmit(true)}
+                  className="invite-button confirm"
+                  aria-describedby="accept-description"
+                >
                   <span className="material-symbols-outlined">check_circle</span> I accept to be Godparent
-                </>
-              )}
-            </button>
-            
-            <button 
-              type="button"
-              onClick={() => handleGodparentSubmit(false)}
-              disabled={isSubmitting}
-              className="invite-button decline"
-              style={{ 
-                opacity: isSubmitting ? 0.7 : 1,
-                cursor: isSubmitting ? 'not-allowed' : 'pointer'
-              }}
-              aria-describedby="decline-description"
-            >
-              <span className="material-symbols-outlined">cancel</span> I can't be a Godparent
-            </button>
+                </button>
+                
+                <button 
+                  type="button"
+                  onClick={() => handleGodparentSubmit(false)}
+                  className="invite-button decline"
+                  aria-describedby="decline-description"
+                >
+                  <span className="material-symbols-outlined">cancel</span> I can't be a Godparent
+                </button>
+              </>
+            )}
           </div>
         </form>
       ) : (

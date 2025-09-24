@@ -38,11 +38,11 @@ export default function GuestInitialView({ guest, editMode }: GuestInitialViewPr
               fontWeight: '600',
               borderRadius: '12px',
               border: 'none',
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              background: 'linear-gradient(135deg, #1c82ff 0%, #0f62fe 100%)',
               color: 'white',
               cursor: 'pointer',
               transition: 'all 0.2s ease',
-              boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)',
+              boxShadow: '0 4px 15px rgba(28, 130, 255, 0.3)',
               minHeight: '48px',
               width: '100%',
               maxWidth: '280px'

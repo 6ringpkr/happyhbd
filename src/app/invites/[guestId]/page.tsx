@@ -30,7 +30,8 @@ export default async function InvitePage({ params, searchParams }: { params: Pro
     mapLabel: 'Map',
     dressCodeLabel: 'Dress code',
     hostsLabel: 'Hosts',
-    giftNote: "We would be honored to have you celebrate with us. Your presence is the most precious gift we could ask for.💙",
+    giftNote: 'We would be honored to have you celebrate with us. Your presence is the most precious gift we could ask for.💙',
+    venueMapUrl: 'https://maps.app.goo.gl/WKZxYMgytgadwv9i7',
   };
   if (guestId) {
     const h = await headers();
@@ -270,6 +271,35 @@ export default async function InvitePage({ params, searchParams }: { params: Pro
                 setTimeout(function(){ hero.classList.add('loaded'); }, 5000);
               }
             } catch {}
+          })();
+        `}
+      </Script>
+      
+      {/* Scroll-based animation control */}
+      <Script id="scroll-animation-control" strategy="afterInteractive">
+        {`
+          (function() {
+            let isScrolling = false;
+            let scrollTimeout;
+            const invitePage = document.querySelector('.invite-page');
+            
+            if (!invitePage) return;
+            
+            function handleScroll() {
+              if (!isScrolling) {
+                isScrolling = true;
+                invitePage.classList.add('invite-page-scroll-pause');
+              }
+              
+              clearTimeout(scrollTimeout);
+              scrollTimeout = setTimeout(function() {
+                isScrolling = false;
+                invitePage.classList.remove('invite-page-scroll-pause');
+              }, 150);
+            }
+            
+            window.addEventListener('scroll', handleScroll, { passive: true });
+            window.addEventListener('touchmove', handleScroll, { passive: true });
           })();
         `}
       </Script>

@@ -1,6 +1,4 @@
 "use client";
-import NiceModal from '@ebay/nice-modal-react';
-import RsvpModal from './RsvpModal';
 import { useState } from 'react';
 
 interface RsvpSectionProps {
@@ -14,9 +12,12 @@ interface RsvpSectionProps {
 
 export default function RsvpSection({ guest, editMode }: RsvpSectionProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState<'Confirmed' | 'Declined' | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleRsvpSubmit = async (status: 'Confirmed' | 'Declined' | 'Pending') => {
+  const handleRsvpSubmit = async (status: 'Confirmed' | 'Declined') => {
     setIsSubmitting(true);
+    setError(null);
     try {
       const formData = new FormData();
       formData.append('uniqueId', guest.uniqueId);
@@ -28,32 +29,21 @@ export default function RsvpSection({ guest, editMode }: RsvpSectionProps) {
         headers: { Accept: 'application/json' }
       });
 
-      if (res.ok) {
-        const json = await res.json().catch(() => null);
-        if (json?.ok) {
-          // Redirect to thank you page
-          const redirectUrl = `/thank-you?uniqueId=${encodeURIComponent(guest.uniqueId)}&status=${encodeURIComponent(status)}`;
-          window.location.href = redirectUrl;
-        } else {
-          window.location.href = '/thank-you';
-        }
+      const json = await res.json().catch(() => null);
+
+      if (res.ok && json?.ok) {
+        // Redirect to thank you page
+        const redirectUrl = `/thank-you?uniqueId=${encodeURIComponent(guest.uniqueId)}&status=${encodeURIComponent(status)}`;
+        window.location.href = redirectUrl;
       } else {
-        const errorText = await res.text().catch(() => '');
-        alert(errorText || 'Failed to submit RSVP');
+        setError(json?.error || `Failed to submit RSVP (${res.status})`);
       }
     } catch (error) {
       console.error('RSVP submission error:', error);
-      alert('Network error - please try again');
+      setError('Network error - please try again');
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const showRsvpModal = () => {
-    NiceModal.show(RsvpModal, {
-      uniqueId: guest.uniqueId,
-      initialStatus: guest.status
-    });
   };
 
   if (guest.status !== 'Pending' && !editMode) {
@@ -79,55 +69,118 @@ export default function RsvpSection({ guest, editMode }: RsvpSectionProps) {
   return (
     <div className="rsvp-form">
       <h3><span className="material-symbols-outlined">rsvp</span> Will you be joining us?</h3>
-      <div style={{ marginTop: '1rem', textAlign: 'center' }}>
-        <button
-          onClick={showRsvpModal}
-          disabled={isSubmitting}
-          className="invite-button primary"
-          style={{ 
-            padding: '12px 24px',
-            fontSize: '16px',
-            fontWeight: '600',
-            borderRadius: '12px',
-            border: 'none',
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            color: 'white',
-            cursor: isSubmitting ? 'not-allowed' : 'pointer',
-            opacity: isSubmitting ? 0.7 : 1,
-            transition: 'all 0.2s ease',
-            boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)',
-            minHeight: '48px', // Better touch target
-            width: '100%',
-            maxWidth: '280px'
-          }}
-          aria-label="Open RSVP form to respond to invitation"
-        >
-          {isSubmitting ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <div style={{ 
-                width: '16px', 
-                height: '16px', 
-                border: '2px solid rgba(255,255,255,0.3)', 
-                borderTop: '2px solid white', 
-                borderRadius: '50%', 
-                animation: 'spin 1s linear infinite' 
-              }} />
-              Submitting...
-            </div>
-          ) : (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span className="material-symbols-outlined">rsvp</span>
-              RSVP Now
+      
+      {isSubmitting ? (
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center',
+          gap: '12px',
+          padding: '16px 24px',
+          background: 'linear-gradient(135deg, #1c82ff 0%, #0f62fe 100%)',
+          color: 'white',
+          borderRadius: '12px',
+          fontSize: '16px',
+          fontWeight: '600',
+          boxShadow: '0 4px 15px rgba(28, 130, 255, 0.3)',
+          marginTop: '1rem'
+        }}>
+          <div style={{ 
+            width: '20px', 
+            height: '20px', 
+            border: '2px solid rgba(255,255,255,0.3)', 
+            borderTop: '2px solid white', 
+            borderRadius: '50%', 
+            animation: 'spin 1s linear infinite' 
+          }} />
+          Submitting...
+        </div>
+      ) : (
+        <div style={{ marginTop: '1rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '400px', margin: '0 auto' }}>
+            {/* Accept Option */}
+            <button
+              onClick={() => {
+                setSelectedStatus('Confirmed');
+                handleRsvpSubmit('Confirmed');
+              }}
+              className={`w-full p-4 rounded-xl border-2 transition-all duration-200 ${
+                selectedStatus === 'Confirmed'
+                  ? 'border-green-500 bg-green-50 text-green-700'
+                  : 'border-gray-200 hover:border-green-300 hover:bg-green-50'
+              }`}
+              style={{ 
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                textAlign: 'left',
+                background: selectedStatus === 'Confirmed' ? '#f0fdf4' : 'white',
+                borderColor: selectedStatus === 'Confirmed' ? '#22c55e' : '#e5e7eb',
+                color: selectedStatus === 'Confirmed' ? '#15803d' : '#374151'
+              }}
+            >
+              <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                selectedStatus === 'Confirmed' 
+                  ? 'border-green-500 bg-green-500' 
+                  : 'border-gray-300'
+              }`}>
+                {selectedStatus === 'Confirmed' && (
+                  <span className="material-symbols-outlined text-white text-sm">check</span>
+                )}
+              </div>
+              <div className="flex-1">
+                <div className="font-medium">I will attend</div>
+                <div className="text-sm opacity-75">Looking forward to celebrating with you!</div>
+              </div>
+              <span className="material-symbols-outlined text-green-500">celebration</span>
+            </button>
+
+            {/* Decline Option */}
+            <button
+              onClick={() => {
+                setSelectedStatus('Declined');
+                handleRsvpSubmit('Declined');
+              }}
+              className={`w-full p-4 rounded-xl border-2 transition-all duration-200 ${
+                selectedStatus === 'Declined'
+                  ? 'border-red-500 bg-red-50 text-red-700'
+                  : 'border-gray-200 hover:border-red-300 hover:bg-red-50'
+              }`}
+              style={{ 
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                textAlign: 'left',
+                background: selectedStatus === 'Declined' ? '#fef2f2' : 'white',
+                borderColor: selectedStatus === 'Declined' ? '#ef4444' : '#e5e7eb',
+                color: selectedStatus === 'Declined' ? '#dc2626' : '#374151'
+              }}
+            >
+              <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                selectedStatus === 'Declined' 
+                  ? 'border-red-500 bg-red-500' 
+                  : 'border-gray-300'
+              }`}>
+                {selectedStatus === 'Declined' && (
+                  <span className="material-symbols-outlined text-white text-sm">check</span>
+                )}
+              </div>
+              <div className="flex-1">
+                <div className="font-medium">I can't make it</div>
+                <div className="text-sm opacity-75">Sorry, I won't be able to attend</div>
+              </div>
+              <span className="material-symbols-outlined text-red-500">cancel</span>
+            </button>
+          </div>
+          
+          {/* Error Message */}
+          {error && (
+            <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg" role="alert" aria-live="polite">
+              <p className="text-red-600 text-sm">{error}</p>
             </div>
           )}
-        </button>
-      </div>
-      <style jsx>{`
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-      `}</style>
+        </div>
+      )}
     </div>
   );
 }
