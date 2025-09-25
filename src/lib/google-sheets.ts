@@ -320,7 +320,7 @@ export interface Settings {
 export const DEFAULT_SETTINGS: Settings = {
   dedicationDateDisplay: 'Oct 11, 2025 (Saturday)',
   dedicationTimeDisplay: '10:00 AM',
-  locationDisplay: 'Celebration Church | 243 Purok 2 Banlic, Calamba City, Laguna',
+  locationDisplay: 'Celebration Church | 0486Purok 2 Banlic, Calamba City, Laguna',
   // Default labels
   dedicationTimeLabel: 'Time',
   locationLabel: 'Location',
