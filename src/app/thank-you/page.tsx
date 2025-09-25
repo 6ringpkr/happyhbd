@@ -29,7 +29,7 @@ export default async function ThankYouPage({ searchParams }: { searchParams?: Pr
   let settings: { dedicationDateDisplay: string; dedicationTimeDisplay: string; locationDisplay: string; dedicationTimeLabel: string; locationLabel: string; dateLabel: string; addressLabel: string; mapLabel: string; dressCodeLabel: string; hostsLabel: string; giftNote: string; venueAddress?: string; venueMapUrl?: string; dressCode?: string; hostNames?: string } = {
     dedicationDateDisplay: 'Oct 11, 2025 (Saturday)',
     dedicationTimeDisplay: '10:00 AM',
-    locationDisplay: 'Celebration Church | 0486Purok 2 Banlic, Calamba City, Laguna',
+    locationDisplay: 'Celebration Church | 0486 Purok 2 Banlic, Calamba City, Laguna',
     dedicationTimeLabel: 'Time',
     locationLabel: 'Location',
     dateLabel: 'Date',
